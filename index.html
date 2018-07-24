@@ -1,0 +1,258 @@
+<DOCTYPE html>
+  <html>
+  <head>
+    <link href="stylesheets/modal.css" rel="stylesheet" type="text/css">
+    <link href="stylesheets/main.css" rel="stylesheet" type="text/css">
+<center><h3><span>HP:</span><span id="hp">0</span></h3>
+  <h3><span>Gold:</span><span id="gold">0</span></h3>
+
+  </head>
+
+  <body>
+
+<div id ="page-container">
+  <input type="button" value="Click"  onclick="removeHP()" class="button">
+  <input type="button" value="Upgrade level 1"  onclick="upgrade(1),disable(1),clickCount(1)" class="button">
+  <input type="button" value="Upgrade level 2"  onclick="upgrade(2),disable(2),clickCount(2)" class="button">
+  <input type="button" value="Upgrade level 3"  onclick="upgrade(3),disable(3),clickCount(3)" class="button">
+<input type="button" value="Auto Clicker Start" onclick="autoclickeractivate()" class="button">
+  <input type="button" value="Monster Generator"  onclick="monsterLoader()" class="button">
+  <input type="button" value="Inventory" onclick= "document.getElementById('modal').style.display='block'" class="modalBtn">
+  <h1 id="monName">Monster Name Here</h1>
+<img src="Images/busoye.png" id = "monimg">
+</div>
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span onclick="document.getElementById('modal').style.display='none'" class="close">&times;</span>
+    <div class="modal-header">
+      <h2>Inventory</h2>
+    </div>
+    <div class="modal-body">
+        <button class="tablink button" onclick="openCity(event, 'inventory'),headerUpdater()">Inventory</button>
+        <button class="tablink button" onclick="openCity(event, 'crafting')">Crafting</button>
+        <button class="tablink button" onclick="openCity(event, 'equipment')">Equipment</button>
+       </div>
+
+<div id="inventory" class="tabs">
+    <h1>Inventory</h1>
+<p id="item-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
+    </div>
+
+<div id="crafting" class="tabs">
+        <h1>Crafting</h1>
+<p id="craft-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
+        </div>
+
+<div id="equipment" class="tabs">
+          <h1>Equipment</h1>
+<p id="weapon-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
+          </div>
+
+    <div class="modal-footer">
+      <h3>Some sort of button?</h3>
+    </div>
+  </div>
+  </div>
+  </body>
+<script>
+
+//Variables and arrays
+var a = 0;
+var currentGold = 0;
+var monHP = 0;
+var killedMons = 0;
+var singleClickV = 10;
+var countMonsDefeated = 0;
+
+function Monster(id, name, hp, gold, killcount, drops, imgpath) {
+    this.id = id;
+    this.name = name;
+    this.hp = hp;
+    this.gold = gold;
+    this.killcount = killcount;
+    this.drops = drops;
+    this.imgpath = imgpath;
+}
+var monsters = [
+ogre = new Monster(1,"Ogre",100,50,0,1,"ogre"),
+goblin = new Monster(2,"Goblin",80,40,0,2,"goblin"),
+troll = new Monster(3,"Troll",60,30,0,3,"troll"),
+hume = new Monster(4,"Hume",30,15,0,4,"busoye"),
+kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk"),
+weisun = new Monster(6,"Weisun - The all BABA",2000,1,0,3,"weisun")]
+
+function Item(id, name, cost, sellvalue ,quantity, clickaugment, imgpath) {
+    this.id = id;
+    this.name = name;
+    this.cost = cost;
+    this.sellvalue = sellvalue;
+    this.quantity = quantity;
+    this.clickaugment = clickaugment;
+    this.imgpath = imgpath;
+}
+var items = [
+wood = new Item(0,"Wood",10,5,0,0,"wood"),
+coal = new Item(1,"Coal",10,5,0,0,"coal"),
+bronze = new Item(2,"Bronze",20,10,0,0,"bronze"),
+steel = new Item(3,"Steel",200,100,0,0,"steel"),
+diamond = new Item(3,"Diamond",2000,1000,0,0,"diamond")
+]
+
+var weapons = [
+wooden = new Item(0,"Wooden Sword",100,50,0,10,"kk"),
+bronze = new Item(1,"Bronze Sword",100,50,0,20,"bronze_sword"),
+iron = new Item(2,"Iron Sword",100,50,0,30,"iron_sword"),
+steel = new Item(3,"Steel Sword",100,50,0,40,"steel_sword"),
+diamond = new Item(4,"Diamond Sword",100,50,0,50,"kk")
+]
+
+var currentMonster = 4;
+var upgrd1 = 0;
+var upgrd2 = 0;
+var upgrd3 = 0;
+
+var currentWeapon = 0;
+var itemList = [];
+var dropchance = 5;
+
+GOLD = document.getElementById("gold");
+HP = document.getElementById("hp");
+BUTTON = document.getElementsByClassName("button");
+MONNAME = document.getElementById("monName")
+MONIMG = document.getElementById("monimg")
+INVENTORY = document.getElementById("item-list")
+
+//set to ondoc load later
+monsterLoader();
+
+function monsterLoader(){
+currentMonster = monsters[Math.floor(Math.random() * monsters.length)];
+HP.innerHTML = currentMonster.hp;
+MONNAME.innerHTML = currentMonster.name;
+MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
+BUTTON[0].disabled = false;
+}
+
+function inventoryLoader(){
+let display = itemList.length;
+let text =  "<table><tr>"
+for (i = 0; i < display; i++) {
+    text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"<br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
+}
+text += "</tr></table>";
+INVENTORY.innerHTML= text;
+//add crafting declaration here
+}
+
+function KillCheck(){
+  if (HP.innerHTML <= 0){
+    HP.innerHTML = 0;
+    currentMonster.killcount++;
+    currentGold = currentGold + currentMonster.gold;
+    GOLD.innerHTML = currentGold;
+    disable(0);
+    activeCheck();
+console.log(currentMonster.name + " has been killed " + currentMonster.killcount + " time(s).");
+killedMons++;
+getItem();
+monsterLoader();
+}
+}
+
+function removeHP(){
+KillCheck();
+HP.innerHTML=HP.innerHTML-singleClickV;
+KillCheck();
+}
+
+//bugged for now
+function autoclickeractivate(){
+  setInterval(function(){
+  KillCheck();
+removeHP();
+HP.innerHTML=monHP;
+},750)
+};
+
+function upgrade(level){
+var level= level;
+currentGold = currentGold - (level *10);
+GOLD.innerHTML = currentGold;
+singleClickV = singleClickV + (level*5);
+}
+
+function activeCheck(){
+if(currentGold>= 50 && upgrd1 == 0){
+  BUTTON[1].disabled=false;}
+  else{BUTTON[1].disabled=true}
+if(currentGold>= 100 && upgrd2 == 0){
+  BUTTON[2].disabled=false;}
+  else{BUTTON[2].disabled=true}
+if(currentGold>= 200){
+  BUTTON[3].disabled=false;}
+  else{BUTTON[3].disabled=true}
+}
+activeCheck();
+function disable(level){
+var level = level;
+BUTTON.item(level).disabled = true;
+}
+
+function clickCount(value){
+var clicks = value;
+if (clicks === 1){upgrd1++;}
+else if (clicks === 2){upgrd2++;}
+else if (clicks === 3){upgrd3++;}
+console.log(upgrd1,upgrd2,upgrd3);
+}
+
+function getItem(index){
+index = currentMonster.drops;
+if (Math.floor(Math.random() * dropchance) >= 3){
+  if (itemList.includes(items[index])){
+    items[index].quantity++;
+  console.log("you already posses this item")} else
+    {itemList.push(items[index])
+    items[index].quantity++;}
+  console.log("you get item " + items[index].name)
+  console.log(itemList)
+  }
+else {console.log("you don't get item")}
+inventoryLoader();
+};
+
+var modal = document.getElementById('modal');
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+
+
+//New test
+document.getElementsByClassName("tablink")[0].click();
+
+function openCity(evt, cityName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("tabs");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+//  for (i = 0; i < x.length; i++) {
+  //  tablinks[i].classList.remove("w3-light-grey");
+  //}
+  document.getElementById(cityName).style.display = "block";
+  //evt.currentTarget.classList.add("w3-light-grey");
+}
+
+headerUpdater(){
+  document.getElementsByClassName("tablink")[0].innerHTML
+}
+
+
+</script>
+<style>
+</style>
+
+  </html>
