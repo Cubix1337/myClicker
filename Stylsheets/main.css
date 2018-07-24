@@ -1,0 +1,47 @@
+#page-container{
+  width: 100%;
+  max-width:768px;
+margin:auto;
+  float: none;
+  transition: all 1s ease;
+  border: 1px solid black;
+}
+
+td {
+    text-align: center;
+    padding:5px;
+}
+
+body{
+  background: url("Images/1280656476626.jpg") no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+.faderanim {visibility:hidden;}
+.fader {
+    animation-name: fader;
+    -webkit-animation-name: fader;
+    animation-duration: 1s;
+    -webkit-animation-duration: 1s;
+    visibility: visible;
+}
+@keyframes fader {
+  0% {
+    opacity: 0;
+  50% {
+      opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fader {
+  0% {
+    opacity: 0;
+  50% {
+      opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
