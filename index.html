@@ -40,7 +40,13 @@
 
 <div id="crafting" class="tabs">
         <h1>Crafting</h1>
+        <p>Recipes:</p>
+        <ul>
+          <li>Wooden Sword</li>
+        </ul>
+
 <p id="craft-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
+<button class="button">Craft</button>
         </div>
 
 <div id="equipment" class="tabs">
@@ -90,21 +96,32 @@ function Item(id, name, cost, sellvalue ,quantity, clickaugment, imgpath) {
     this.clickaugment = clickaugment;
     this.imgpath = imgpath;
 }
+
+
 var items = [
 wood = new Item(0,"Wood",10,5,0,0,"wood"),
 coal = new Item(1,"Coal",10,5,0,0,"coal"),
 bronze = new Item(2,"Bronze",20,10,0,0,"bronze"),
 steel = new Item(3,"Steel",200,100,0,0,"steel"),
-diamond = new Item(3,"Diamond",2000,1000,0,0,"diamond")
+diamond = new Item(4,"Diamond",2000,1000,0,0,"diamond"),
+woodenSword = new Item(5,"Wooden Sword",100,50,0,10,"kk"),
+bronzeSword = new Item(6,"Bronze Sword",100,50,0,20,"bronze_sword"),
+ironSword = new Item(7,"Iron Sword",100,50,0,30,"iron_sword"),
+steelSword = new Item(8,"Steel Sword",100,50,0,40,"steel_sword"),
+diamondSword = new Item(9,"Diamond Sword",100,50,0,50,"kk")
 ]
 
-var weapons = [
-wooden = new Item(0,"Wooden Sword",100,50,0,10,"kk"),
-bronze = new Item(1,"Bronze Sword",100,50,0,20,"bronze_sword"),
-iron = new Item(2,"Iron Sword",100,50,0,30,"iron_sword"),
-steel = new Item(3,"Steel Sword",100,50,0,40,"steel_sword"),
-diamond = new Item(4,"Diamond Sword",100,50,0,50,"kk")
+function Recipe (id, name, required){
+  this.id = id;
+  this.name = name;
+  this.required = required;
+}
+
+var recipes = [
+woodenSword = new Recipe (0,"Wooden Sword",["stuff","later"])
 ]
+
+
 
 var currentMonster = 4;
 var upgrd1 = 0;
@@ -113,7 +130,7 @@ var upgrd3 = 0;
 
 var currentWeapon = 0;
 var itemList = [];
-var dropchance = 5;
+var dropChance = 5;
 
 GOLD = document.getElementById("gold");
 HP = document.getElementById("hp");
@@ -121,6 +138,7 @@ BUTTON = document.getElementsByClassName("button");
 MONNAME = document.getElementById("monName")
 MONIMG = document.getElementById("monimg")
 INVENTORY = document.getElementById("item-list")
+CRAFTING = document.getElementById("craft-list")
 
 //set to ondoc load later
 monsterLoader();
@@ -141,10 +159,29 @@ for (i = 0; i < display; i++) {
 }
 text += "</tr></table>";
 INVENTORY.innerHTML= text;
-//add crafting declaration here
+CRAFTING.innerHTML= text;
+//add crafting declaration here if planning to base off itemList modal
 }
 
-function KillCheck(){
+function recipeLoader(){
+let display = recipeList.length;
+let text =  "<p>Required:</p>"
+for (i = 0; i < display; i++) {
+    text += "<ul>" +"<li>" + recipeList[i].name + ":" + recipeList[i].required +"</li>";
+}
+text += "<button class='button'>Craft</button>";
+CRAFTING.innerHTML= text;
+//add crafting declaration here if planning to base off itemList modal
+}
+
+function craftItem(recipe){
+let recipe = recipe;
+
+getItem();
+}
+
+
+function killCheck(){
   if (HP.innerHTML <= 0){
     HP.innerHTML = 0;
     currentMonster.killcount++;
@@ -154,21 +191,21 @@ function KillCheck(){
     activeCheck();
 console.log(currentMonster.name + " has been killed " + currentMonster.killcount + " time(s).");
 killedMons++;
-getItem();
+getLoot();
 monsterLoader();
 }
 }
 
 function removeHP(){
-KillCheck();
+killCheck();
 HP.innerHTML=HP.innerHTML-singleClickV;
-KillCheck();
+killCheck();
 }
 
 //bugged for now
 function autoclickeractivate(){
   setInterval(function(){
-  KillCheck();
+  killCheck();
 removeHP();
 HP.innerHTML=monHP;
 },750)
@@ -206,9 +243,9 @@ else if (clicks === 3){upgrd3++;}
 console.log(upgrd1,upgrd2,upgrd3);
 }
 
-function getItem(index){
+function getLoot(index){
 index = currentMonster.drops;
-if (Math.floor(Math.random() * dropchance) >= 3){
+if (Math.floor(Math.random() * dropChance) >= 3){
   if (itemList.includes(items[index])){
     items[index].quantity++;
   console.log("you already posses this item")} else
@@ -220,6 +257,14 @@ if (Math.floor(Math.random() * dropchance) >= 3){
 else {console.log("you don't get item")}
 inventoryLoader();
 };
+
+function getItem(id){
+  items[id].quantity++;
+  itemList.push(items[id]);
+  console.log("you gained " + items[id].name)
+  console.log(itemList);
+}
+
 
 var modal = document.getElementById('modal');
 window.onclick = function(event) {
@@ -245,6 +290,7 @@ function openCity(evt, cityName) {
   document.getElementById(cityName).style.display = "block";
   //evt.currentTarget.classList.add("w3-light-grey");
 }
+
 
 
 </script>
