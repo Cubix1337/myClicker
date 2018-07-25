@@ -118,9 +118,8 @@ function Recipe (id, name, required){
 }
 
 var recipes = [
-woodenSword = new Recipe (0,"Wooden Sword",["stuff","later"])
+woodenSwordRecipe = new Recipe (0,"Wooden Sword",["stuff","later"])
 ]
-
 
 
 var currentMonster = 4;
@@ -259,12 +258,14 @@ inventoryLoader();
 };
 
 function getItem(id){
-  items[id].quantity++;
-  itemList.push(items[id]);
+  if (itemList.includes(items[id])){
+    items[id].quantity++;
+  console.log("you already posses this item")} else
+    {itemList.push(items[id])
+    items[id].quantity++;}
   console.log("you gained " + items[id].name)
-  console.log(itemList);
-}
-
+  console.log(itemList)
+};
 
 var modal = document.getElementById('modal');
 window.onclick = function(event) {
