@@ -31,15 +31,22 @@
       <button class="tablink button" onclick="openTab(event, 'refining')">Refining</button>
     </div>
     <div class="modal-body">
-    </div>
 
+</div>
 <div id="inventory" class="tabs fader">
 <p id="item-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
     </div>
 
 <div id="crafting" class="tabs fader">
+  <div class="alert slideanim" id="alert">
+    <span class="closebtn">&times;</span>
+    <p id="alert-text"><strong>You have failed to create the reuired item!</strong></p>
+  </div>
 <p id="craft-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
-    </div>
+
+
+
+</div>
 
 <div id="equipment" class="tabs fader">
 <p id="weapon-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
@@ -48,10 +55,6 @@
 <div id="refining" class="tabs fader">
 <p id="refine-list">You've got nothing to refine!<br><img src="Images/ianbeale.gif"></p>
                   </div>
-
-    <div class="modal-footer">
-      <h3>Some sort of button?</h3>
-    </div>
   </div>
   </div>
   </body>
@@ -100,12 +103,12 @@ coal = new Item(1,"Coal",10,5,0,0,"loot","coal"),
 bronze = new Item(2,"Bronze",20,10,0,0,"loot","bronze"),
 steel = new Item(3,"Steel",200,100,0,0,"loot","steel"),
 diamond = new Item(4,"Diamond",2000,1000,0,0,"loot","diamond"),
-woodenSword = new Item(5,"Wooden Sword",100,50,0,10,"weapon","kk"),
+woodenSword = new Item(5,"Wooden Sword",100,50,0,10,"weapon","wooden_sword"),
 bronzeSword = new Item(6,"Bronze Sword",100,50,0,20,"weapon","bronze_sword"),
 ironSword = new Item(7,"Iron Sword",100,50,0,30,"weapon","iron_sword"),
 steelSword = new Item(8,"Steel Sword",100,50,0,40,"weapon","steel_sword"),
 diamondSword = new Item(9,"Diamond Sword",100,50,0,50,"weapon","kk")
-]
+];
 
 var currentMonster = 4;
 var upgrd1 = 0;
@@ -119,11 +122,11 @@ var dropChance = 5;
 GOLD = document.getElementById("gold");
 HP = document.getElementById("hp");
 BUTTON = document.getElementsByClassName("button");
-MONNAME = document.getElementById("monName")
-MONIMG = document.getElementById("monimg")
-INVENTORY = document.getElementById("item-list")
-CRAFTING = document.getElementById("craft-list")
-
+MONNAME = document.getElementById("monName");
+MONIMG = document.getElementById("monimg");
+INVENTORY = document.getElementById("item-list");
+CRAFTING = document.getElementById("craft-list");
+ALERT = document.getElementById("alert-text");
 //set to ondoc load later
 monsterLoader();
 
@@ -153,7 +156,7 @@ function recipeLoader(){
 let display = recipes.length;
 let text =  "<table><tr><th>Item:</th><th>Needed:</th><th>Quantity:</th></tr>"
 for (i = 0; i < display; i++) {
-    text +="<tr><td>" + recipes[i].name + ":</td><td>" + items[recipes[i].required[0]].name +"<br>" + items[recipes[i].required[2]].name + "</td><td>" + recipes[i].required[1] +"<br>" +recipes[i].required[3] +"</td><td><button class='button'>Craft</button></td></tr>";
+    text +="<tr><td>" + recipes[i].name + ":</td><td>" + items[recipes[i].required[0]].name +"<br>" + items[recipes[i].required[2]].name + "</td><td>" + recipes[i].required[1] +"<br>" +recipes[i].required[3] +"</td><td><button class='button' onclick='craftItem(" + recipes[i].id +")'>Craft</button></td></tr>";
 }
 text += "</table>";
 CRAFTING.innerHTML= text;
@@ -172,6 +175,7 @@ bronzeSwordRecipe = new Recipe (1,"Bronze Sword",[2,10,0,5],6)
 ]
 
 function craftItem(id){
+ var alert = document.getElementById("alert");
   var itemtoMake =recipes[id];
   var component1 = itemtoMake.required[0];
   var component2 = itemtoMake.required[2];
@@ -182,6 +186,11 @@ function craftItem(id){
   console.log(items[component2].name + " : " + qty2);
 if (itemList.includes(items[component1])=== false || itemList.includes(items[component2])=== false){
 console.log("You do not posses the required items");
+alert.classList.remove('slideanim');
+alert.classList.add ('slide');
+alert.style.display="block";
+alert.style.opacity="1";
+//setTimeout(function(){alert.classList.add ('slide')},50);
 }
 else if (itemList[itemList.indexOf(items[component1])].quantity >= qty1 && itemList[itemList.indexOf(items[component2])].quantity >= qty2){
 getItem(itemtoMake.craftedItemId,1);
@@ -304,6 +313,19 @@ function openTab(evt, tabName) {
   //evt.currentTarget.classList.add("w3-light-grey");
 }
 
+var close = document.getElementsByClassName("closebtn");
+var i;
+
+for (i = 0; i < close.length; i++) {
+    close[i].onclick = function(){
+      var div = this.parentElement;
+      div.style.opacity="0";
+    setTimeout(function(){div.style.display='none';},600);
+  }
+}
+
+//useful code
+ //onclick="this.parentElement.style.display='none';"
 </script>
 <style>
 </style>
