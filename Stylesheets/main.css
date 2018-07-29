@@ -7,6 +7,7 @@ margin:auto;
   border: 1px solid black;
 }
 
+img {max-height: 250px;}
 td {
     text-align: center;
     padding:5px;
