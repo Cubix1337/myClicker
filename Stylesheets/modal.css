@@ -10,6 +10,8 @@
     overflow: auto;
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    animation-name: animatetop;
+    animation-duration: 0.3s;
 }
 
 /* Modal Content/Box */
@@ -28,6 +30,7 @@
     font-size: 45px;
     font-weight: bold;
     padding-right: 10px;
+
 }
 
 .close:hover,
@@ -39,11 +42,20 @@
 
 /* Modal Header */
 .modal-header {
-    padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
+    padding: 2px 0px;
+    background-color: rgb(78, 75, 75);
 }
-
+.modal-header button{
+border-top: none;
+border-bottom: none;
+background: none;
+font-size: 20px;
+margin: 10px 15px 10px 15px;
+color: white;
+position: relative;
+    left: 35px;
+}
+}
 .modal-body {padding: 2px 16px;background-color: white;}
 
 /* Modal Footer */
@@ -62,8 +74,19 @@
     border: 1px solid #888;
     width: 80%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    animation-name: animatetop;
-    animation-duration: 0.4s
+
+}
+
+#crafting table {
+    border-collapse: collapse;
+    width: 50%;
+}
+
+#crafting td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    text-align:center;
 }
 
 .modal-content::-webkit-scrollbar {
@@ -75,4 +98,8 @@
 @keyframes animatetop {
     from {top: -300px; opacity: 0}
     to {top: 0; opacity: 1}
+}
+@keyframes animateback {
+from {top: 0; opacity: 1;}
+to {top: -300px; opacity: 0;}
 }
