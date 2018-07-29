@@ -17,7 +17,7 @@
   <input type="button" value="Upgrade level 3"  onclick="upgrade(3),disable(3),clickCount(3)" class="button">
 <input type="button" value="Auto Clicker Start" onclick="autoclickeractivate()" class="button">
   <input type="button" value="Monster Generator"  onclick="monsterLoader()" class="button">
-  <input type="button" value="Inventory" onclick= "document.getElementById('modal').style.display='block'" class="modalBtn">
+  <input type="button" value="Items" onclick= "document.getElementById('modal').style.display='block',inventoryLoader(),recipeLoader()" class="modalBtn">
   <h1 id="monName">Monster Name Here</h1>
 <img src="Images/busoye.png" id = "monimg">
 </div>
@@ -25,34 +25,29 @@
   <div class="modal-content">
     <span onclick="document.getElementById('modal').style.display='none'" class="close">&times;</span>
     <div class="modal-header">
-      <h2>Inventory</h2>
+      <button class="tablink button" onclick="openTab(event, 'inventory')">Loot</button>
+      <button class="tablink button" onclick="openTab(event, 'crafting'),recipeLoader()">Crafting</button>
+      <button class="tablink button" onclick="openTab(event, 'equipment')">Equipment</button>
+      <button class="tablink button" onclick="openTab(event, 'refining')">Refining</button>
     </div>
     <div class="modal-body">
-        <button class="tablink button" onclick="openCity(event, 'inventory')">Inventory</button>
-        <button class="tablink button" onclick="openCity(event, 'crafting')">Crafting</button>
-        <button class="tablink button" onclick="openCity(event, 'equipment')">Equipment</button>
-       </div>
+    </div>
 
-<div id="inventory" class="tabs">
-    <h1>Inventory</h1>
+<div id="inventory" class="tabs fader">
 <p id="item-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
     </div>
 
-<div id="crafting" class="tabs">
-        <h1>Crafting</h1>
-        <p>Recipes:</p>
-        <ul>
-          <li>Wooden Sword</li>
-        </ul>
-
+<div id="crafting" class="tabs fader">
 <p id="craft-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
-<button class="button">Craft</button>
-        </div>
+    </div>
 
-<div id="equipment" class="tabs">
-          <h1>Equipment</h1>
+<div id="equipment" class="tabs fader">
 <p id="weapon-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
           </div>
+
+<div id="refining" class="tabs fader">
+<p id="refine-list">You've got nothing to refine!<br><img src="Images/ianbeale.gif"></p>
+                  </div>
 
     <div class="modal-footer">
       <h3>Some sort of button?</h3>
@@ -87,40 +82,30 @@ hume = new Monster(4,"Hume",30,15,0,4,"busoye"),
 kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk"),
 weisun = new Monster(6,"Weisun - The all BABA",2000,1,0,3,"weisun")]
 
-function Item(id, name, cost, sellvalue ,quantity, clickaugment, imgpath) {
+function Item(id, name, cost, sellvalue ,quantity, clickaugment, type, imgpath) {
     this.id = id;
     this.name = name;
     this.cost = cost;
     this.sellvalue = sellvalue;
     this.quantity = quantity;
     this.clickaugment = clickaugment;
+    this.type = type;
     this.imgpath = imgpath;
 }
 
 
 var items = [
-wood = new Item(0,"Wood",10,5,0,0,"wood"),
-coal = new Item(1,"Coal",10,5,0,0,"coal"),
-bronze = new Item(2,"Bronze",20,10,0,0,"bronze"),
-steel = new Item(3,"Steel",200,100,0,0,"steel"),
-diamond = new Item(4,"Diamond",2000,1000,0,0,"diamond"),
-woodenSword = new Item(5,"Wooden Sword",100,50,0,10,"kk"),
-bronzeSword = new Item(6,"Bronze Sword",100,50,0,20,"bronze_sword"),
-ironSword = new Item(7,"Iron Sword",100,50,0,30,"iron_sword"),
-steelSword = new Item(8,"Steel Sword",100,50,0,40,"steel_sword"),
-diamondSword = new Item(9,"Diamond Sword",100,50,0,50,"kk")
+wood = new Item(0,"Wood",10,5,0,0,"loot","wood"),
+coal = new Item(1,"Coal",10,5,0,0,"loot","coal"),
+bronze = new Item(2,"Bronze",20,10,0,0,"loot","bronze"),
+steel = new Item(3,"Steel",200,100,0,0,"loot","steel"),
+diamond = new Item(4,"Diamond",2000,1000,0,0,"loot","diamond"),
+woodenSword = new Item(5,"Wooden Sword",100,50,0,10,"weapon","kk"),
+bronzeSword = new Item(6,"Bronze Sword",100,50,0,20,"weapon","bronze_sword"),
+ironSword = new Item(7,"Iron Sword",100,50,0,30,"weapon","iron_sword"),
+steelSword = new Item(8,"Steel Sword",100,50,0,40,"weapon","steel_sword"),
+diamondSword = new Item(9,"Diamond Sword",100,50,0,50,"weapon","kk")
 ]
-
-function Recipe (id, name, required){
-  this.id = id;
-  this.name = name;
-  this.required = required;
-}
-
-var recipes = [
-woodenSwordRecipe = new Recipe (0,"Wooden Sword",["stuff","later"])
-]
-
 
 var currentMonster = 4;
 var upgrd1 = 0;
@@ -147,10 +132,13 @@ currentMonster = monsters[Math.floor(Math.random() * monsters.length)];
 HP.innerHTML = currentMonster.hp;
 MONNAME.innerHTML = currentMonster.name;
 MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
+setTimeout(function(){MONIMG.classList.add ('fader')},50)
 BUTTON[0].disabled = false;
 }
 
 function inventoryLoader(){
+if (itemList.length === 0){CRAFTING.innerHTML="You've got nothing left!<br><img src='Images/ianbeale.gif'"}
+else {
 let display = itemList.length;
 let text =  "<table><tr>"
 for (i = 0; i < display; i++) {
@@ -158,27 +146,59 @@ for (i = 0; i < display; i++) {
 }
 text += "</tr></table>";
 INVENTORY.innerHTML= text;
-CRAFTING.innerHTML= text;
-//add crafting declaration here if planning to base off itemList modal
+}
 }
 
 function recipeLoader(){
-let display = recipeList.length;
-let text =  "<p>Required:</p>"
+let display = recipes.length;
+let text =  "<table><tr><th>Item:</th><th>Needed:</th><th>Quantity:</th></tr>"
 for (i = 0; i < display; i++) {
-    text += "<ul>" +"<li>" + recipeList[i].name + ":" + recipeList[i].required +"</li>";
+    text +="<tr><td>" + recipes[i].name + ":</td><td>" + items[recipes[i].required[0]].name +"<br>" + items[recipes[i].required[2]].name + "</td><td>" + recipes[i].required[1] +"<br>" +recipes[i].required[3] +"</td><td><button class='button'>Craft</button></td></tr>";
 }
-text += "<button class='button'>Craft</button>";
+text += "</table>";
 CRAFTING.innerHTML= text;
-//add crafting declaration here if planning to base off itemList modal
 }
 
-function craftItem(recipe){
-let recipe = recipe;
-
-getItem();
+function Recipe (id, name, required, craftedItemId){
+  this.id = id;
+  this.name = name;
+  this.required = required;
+  this.craftedItemId = craftedItemId;
 }
 
+var recipes = [
+woodenSwordRecipe = new Recipe (0,"Wooden Sword",[0,10,3,5],5),
+bronzeSwordRecipe = new Recipe (1,"Bronze Sword",[2,10,0,5],6)
+]
+
+function craftItem(id){
+  var itemtoMake =recipes[id];
+  var component1 = itemtoMake.required[0];
+  var component2 = itemtoMake.required[2];
+  var qty1 = itemtoMake.required[1];
+  var qty2 = itemtoMake.required[3];
+  console.log(itemtoMake.name + ":")
+  console.log(items[component1].name + " : " + qty1)
+  console.log(items[component2].name + " : " + qty2);
+if (itemList.includes(items[component1])=== false || itemList.includes(items[component2])=== false){
+console.log("You do not posses the required items");
+}
+else if (itemList[itemList.indexOf(items[component1])].quantity >= qty1 && itemList[itemList.indexOf(items[component2])].quantity >= qty2){
+getItem(itemtoMake.craftedItemId,1);
+}
+else {console.log("You do not posses enough the required items");}
+};
+
+
+function getItem(id,times){
+if (itemList.includes(items[id])){
+    items[id].quantity +=times;
+  console.log("you already posses this item")} else
+    {itemList.push(items[id])
+    items[id].quantity +=times;}
+  console.log("you gained " + items[id].name)
+  console.log(itemList)
+};
 
 function killCheck(){
   if (HP.innerHTML <= 0){
@@ -191,6 +211,8 @@ function killCheck(){
 console.log(currentMonster.name + " has been killed " + currentMonster.killcount + " time(s).");
 killedMons++;
 getLoot();
+MONIMG.classList.remove('fader')
+MONIMG.classList.add ('faderanim')
 monsterLoader();
 }
 }
@@ -257,28 +279,18 @@ else {console.log("you don't get item")}
 inventoryLoader();
 };
 
-function getItem(id){
-  if (itemList.includes(items[id])){
-    items[id].quantity++;
-  console.log("you already posses this item")} else
-    {itemList.push(items[id])
-    items[id].quantity++;}
-  console.log("you gained " + items[id].name)
-  console.log(itemList)
-};
 
 var modal = document.getElementById('modal');
 window.onclick = function(event) {
 if (event.target == modal) {
-modal.style.display = "none";
+modal.style.display="none";
 }
 }
 
 
-//New test
 document.getElementsByClassName("tablink")[0].click();
 
-function openCity(evt, cityName) {
+function openTab(evt, tabName) {
   var i, x, tablinks;
   x = document.getElementsByClassName("tabs");
   for (i = 0; i < x.length; i++) {
@@ -288,11 +300,9 @@ function openCity(evt, cityName) {
 //  for (i = 0; i < x.length; i++) {
   //  tablinks[i].classList.remove("w3-light-grey");
   //}
-  document.getElementById(cityName).style.display = "block";
+  document.getElementById(tabName).style.display = "block";
   //evt.currentTarget.classList.add("w3-light-grey");
 }
-
-
 
 </script>
 <style>
