@@ -142,13 +142,12 @@ BUTTON[0].disabled = false;
 function inventoryLoader(){
 if (itemList.length === 0){CRAFTING.innerHTML="You've got nothing left!<br><img src='Images/ianbeale.gif'"}
 else {
-let display = itemList.length;
-let text =  "<table><tr>"
-for (i = 0; i < display; i++) {
-    text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"<br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
+let text =  "<table><tr>";
+for (i = 0; i < itemList.length; i++) {
+if(itemList[i].type == "loot"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"<br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
 }
-text += "</tr></table>";
 INVENTORY.innerHTML= text;
+}
 }
 }
 
@@ -326,6 +325,14 @@ for (i = 0; i < close.length; i++) {
 
 //useful code
  //onclick="this.parentElement.style.display='none';"
+
+
+//works!!!!
+// for (i = 0; i < itemList.length; i++) {
+// if(itemList[i].type == "loot" ){console.log(itemList[i])}
+// }
+
+
 </script>
 <style>
 </style>
