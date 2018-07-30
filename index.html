@@ -40,7 +40,7 @@
 <div id="crafting" class="tabs fader">
   <div class="alert slideanim" id="alert">
     <span class="closebtn">&times;</span>
-    <p id="alert-text"><strong>You have failed to create the reuired item!</strong></p>
+    <p id="alert-text"><strong>You do not posses the required loot to create that item!</strong></p>
   </div>
 <p id="craft-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
 
@@ -49,7 +49,7 @@
 </div>
 
 <div id="equipment" class="tabs fader">
-<p id="weapon-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
+<p id="equipment-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
           </div>
 
 <div id="refining" class="tabs fader">
@@ -127,6 +127,7 @@ MONIMG = document.getElementById("monimg");
 INVENTORY = document.getElementById("item-list");
 CRAFTING = document.getElementById("craft-list");
 ALERT = document.getElementById("alert-text");
+EQUIPMENT = document.getElementById("equipment-list");
 //set to ondoc load later
 monsterLoader();
 
@@ -150,6 +151,19 @@ INVENTORY.innerHTML= text;
 }
 }
 }
+
+function equipmentLoader(){
+if (itemList.length === 0){EQUIPMENT.innerHTML="You've got no equipment!<br><img src='Images/ianbeale.gif'"}
+else {
+let text =  "<table><tr>";
+for (i = 0; i < itemList.length; i++) {
+if(itemList[i].type == "weapon"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"<br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
+}
+EQUIPMENT.innerHTML= text;
+}
+}
+}
+
 
 function recipeLoader(){
 let display = recipes.length;
