@@ -14,15 +14,6 @@
     animation-duration: 0.3s;
 }
 
-/* Modal Content/Box */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 90%;
-}
-
 /* The Close Button */
 .close {
     color: #fff;
@@ -53,7 +44,7 @@ font-size: 20px;
 margin: 10px 15px 10px 15px;
 color: white;
 position: relative;
-    left: 35px;
+    left: 10px;
 }
 }
 .modal-body {padding: 2px 16px;background-color: white;}
@@ -72,9 +63,8 @@ position: relative;
     margin: auto;
     padding: 0;
     border: 1px solid #888;
-    width: 80%;
+    width: 90%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-
 }
 
 #crafting table {
