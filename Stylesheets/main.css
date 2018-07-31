@@ -4,7 +4,6 @@
 margin:auto;
   float: none;
   transition: all 1s ease;
-  border: 1px solid black;
 }
 
 img {max-height: 250px;}
