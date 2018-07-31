@@ -146,7 +146,7 @@ else if (itemList.includes(items[component1])=== true && itemList[itemList.index
     removeItem(component1,qty1);
     removeItem(component2,qty2);
     alertTrigger(0);
-successText.innerHTML="You have successfully crated an item";}
+successText.innerHTML="You have successfully crated a " + itemtoMake.name + ".";}
 
 };
 
