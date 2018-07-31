@@ -6,6 +6,9 @@ margin:auto;
   transition: all 1s ease;
 }
 
+#monimg:hover,.button:hover{
+  cursor: pointer;
+}
 img {max-height: 250px;}
 td {
     text-align: center;
@@ -17,9 +20,12 @@ body{
     background-attachment: fixed;
     background-position: center;
 }
-
+/*body,html, .button {
+   cursor: url(cursor.gif), pointer;
+}
+*/
 .alert {
-    padding: 15px;
+    padding: 5px;
     background-color: #f44336;
     color: white;
     display:none;
@@ -28,11 +34,12 @@ body{
 
 .closebtn {
     margin-left: 15px;
+    margin-top: 5px;
     color: white;
     font-weight: bold;
     float: right;
-    font-size: 22px;
-    line-height: 20px;
+    font-size: 30px;
+    line-height: 15px;
     cursor: pointer;
     transition: 0.3s;
 }
