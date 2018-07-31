@@ -7,7 +7,7 @@ var singleClickV = 10;
 var countMonsDefeated = 0;
 
 
-function Monster(id, name, hp, gold, killcount, drops, imgpath) {
+function Monster(id, name, hp, gold, killcount, drops, imgpath, monTier, monType, monClass){
     this.id = id;
     this.name = name;
     this.hp = hp;
@@ -15,14 +15,18 @@ function Monster(id, name, hp, gold, killcount, drops, imgpath) {
     this.killcount = killcount;
     this.drops = drops;
     this.imgpath = imgpath;
+    this.monTier = monTier;
+    this.monType = monType;
+    this.monClass= monClass;
 }
 var monsters = [
-ogre = new Monster(1,"Ogre",100,50,0,1,"ogre"),
-goblin = new Monster(2,"Goblin",80,40,0,2,"goblin"),
-troll = new Monster(3,"Troll",60,30,0,3,"troll"),
-hume = new Monster(4,"Hume",30,15,0,4,"busoye"),
-kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk"),
-weisun = new Monster(6,"Weisun - The all BABA",200,1000,0,3,"weisun")]
+ogre = new Monster(1,"Mike Miller",100,50,0,1,"ogre",0,"Ogre","Mob"),
+goblin = new Monster(2,"Charfeeleon",80,40,0,2,"goblin",0,"Goblin","Mob"),
+troll = new Monster(3,"Jinxy",60,30,0,3,"troll",0,"Troll","Mob"),
+busoye = new Monster(4,"Busoye - The holy",30,15,0,4,"busoye",0,"Human","Mob"),
+kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk",0,"Human","Mob"),
+weisun = new Monster(6,"Weisun - The all BABA",200,1000,0,3,"weisun",0,"Human","Boss")
+]
 
 function Item(id, name, cost, sellvalue ,quantity, clickaugment, type, imgpath) {
     this.id = id;
@@ -57,6 +61,9 @@ var currentWeapon = 0;
 var itemList = [];
 var dropChance = 5;
 
+var currentTier = 0;
+var timeLimit = 5;
+
 GOLD = document.getElementById("gold");
 HP = document.getElementById("hp");
 BUTTON = document.getElementsByClassName("button");
@@ -69,16 +76,42 @@ ALERTFAIL = document.getElementById("alert-fail");
 ALERTINSF1 = document.getElementById("alert-insufficient-item1");
 ALERTINSF2 = document.getElementById("alert-insufficient-item2");
 EQUIPMENT = document.getElementById("equipment-list");
+TIMER = document.getElementById("timer");
+
 //set to ondoc load later
 monsterLoader();
 
 function monsterLoader(){
+MONIMG.classList.remove('fader')
+MONIMG.classList.add ('faderanim')
 currentMonster = monsters[Math.floor(Math.random() * monsters.length)];
 HP.innerHTML = currentMonster.hp;
 MONNAME.innerHTML = currentMonster.name;
 MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
 setTimeout(function(){MONIMG.classList.add ('fader')},50)
 }
+
+function bossLoader(){
+TIMER.style.display="block";
+//tier = currentTier;
+for (i = 0; i < monsters.length; i++) {
+if (monsters[i].monClass == "Boss"){
+  MONIMG.classList.remove('fader')
+  MONIMG.classList.add ('faderanim')
+  currentMonster = monsters[i];
+  HP.innerHTML = currentMonster.hp;
+  MONNAME.innerHTML = currentMonster.name;
+  MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
+  setTimeout(function(){MONIMG.classList.add ('fader')},50)
+}
+}
+var timeLimit = setInterval(timer,1000);
+function timer (){
+if (TIMER.innerHTML==0){clearInterval(timeLimit);monsterLoader()}
+  else{TIMER.innerHTML=TIMER.innerHTML-1}
+}
+}
+
 
 function inventoryLoader(){
 if (itemList.length === 0){CRAFTING.innerHTML="You've got nothing left!<br><img src='Images/ianbeale.gif'"}
@@ -203,13 +236,10 @@ function killCheck(){
     currentMonster.killcount++;
     currentGold = currentGold + currentMonster.gold;
     GOLD.innerHTML = currentGold;
-    disable(0);
     activeCheck();
 console.log(currentMonster.name + " has been killed " + currentMonster.killcount + " time(s).");
 killedMons++;
 getLoot();
-MONIMG.classList.remove('fader')
-MONIMG.classList.add ('faderanim')
 monsterLoader();
 }
 }
