@@ -1,4 +1,3 @@
-
 //Variables and arrays
 var a = 0;
 var currentGold = 0;
@@ -133,10 +132,20 @@ alert.classList.remove('slideanim');
 alert.classList.add ('slide');
 alert.style.display="block";
 alert.style.opacity="1";
+alert.style.backgroundColor="red";
+ALERT.innerHTML="You do not posses the required materials";
 //setTimeout(function(){alert.classList.add ('slide')},50);
 }
 else if (itemList[itemList.indexOf(items[component1])].quantity >= qty1 && itemList[itemList.indexOf(items[component2])].quantity >= qty2){
 getItem(itemtoMake.craftedItemId,1);
+removeItem(component1,qty1);
+removeItem(component2,qty2);
+alert.classList.remove('slideanim');
+alert.classList.add ('slide');
+alert.style.display="block";
+alert.style.backgroundColor="green";
+alert.style.opacity="1";
+ALERT.innerHTML="You have sucessfully crated an item";
 }
 else {console.log("You do not posses enough the required items");}
 };
@@ -151,6 +160,18 @@ if (itemList.includes(items[id])){
   console.log("you gained " + items[id].name)
   console.log(itemList)
 };
+
+function removeItem(id,qty){
+//if (itemList.includes(items[id])){
+items[id].quantity -=qty;
+console.log("you lose " + qty +" "+ items[id].name+"(s)");
+console.log(itemList);
+if (itemList[itemList.indexOf(items[id])].quantity <=0)
+{itemList.splice(itemList.indexOf(items[id]), 1);
+console.log(itemList)}
+}
+
+
 
 function killCheck(){
   if (HP.innerHTML <= 0){
