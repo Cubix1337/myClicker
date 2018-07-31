@@ -6,6 +6,7 @@ var killedMons = 0;
 var singleClickV = 10;
 var countMonsDefeated = 0;
 
+
 function Monster(id, name, hp, gold, killcount, drops, imgpath) {
     this.id = id;
     this.name = name;
@@ -21,7 +22,7 @@ goblin = new Monster(2,"Goblin",80,40,0,2,"goblin"),
 troll = new Monster(3,"Troll",60,30,0,3,"troll"),
 hume = new Monster(4,"Hume",30,15,0,4,"busoye"),
 kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk"),
-weisun = new Monster(6,"Weisun - The all BABA",2000,1,0,3,"weisun")]
+weisun = new Monster(6,"Weisun - The all BABA",200,1000,0,3,"weisun")]
 
 function Item(id, name, cost, sellvalue ,quantity, clickaugment, type, imgpath) {
     this.id = id;
@@ -33,7 +34,6 @@ function Item(id, name, cost, sellvalue ,quantity, clickaugment, type, imgpath) 
     this.type = type;
     this.imgpath = imgpath;
 }
-
 
 var items = [
 wood = new Item(0,"Wood",10,5,0,0,"loot","wood"),
@@ -64,7 +64,10 @@ MONNAME = document.getElementById("monName");
 MONIMG = document.getElementById("monimg");
 INVENTORY = document.getElementById("item-list");
 CRAFTING = document.getElementById("craft-list");
-ALERT = document.getElementById("alert-text");
+ALERTSUCCESS = document.getElementById("alert-success");
+ALERTFAIL = document.getElementById("alert-fail");
+ALERTINSF1 = document.getElementById("alert-insufficient-item1");
+ALERTINSF2 = document.getElementById("alert-insufficient-item2");
 EQUIPMENT = document.getElementById("equipment-list");
 //set to ondoc load later
 monsterLoader();
@@ -117,7 +120,10 @@ bronzeSwordRecipe = new Recipe (1,"Bronze Sword",[2,10,0,5],6)
 ]
 
 function craftItem(id){
- var alert = document.getElementById("alert");
+var successText = document.getElementById("success-text");
+var failText = document.getElementById("fail-text");
+var insf1Text = document.getElementById("insf1-text");
+var insf2Text = document.getElementById("insf2-text");
   var itemtoMake =recipes[id];
   var component1 = itemtoMake.required[0];
   var component2 = itemtoMake.required[2];
@@ -126,30 +132,50 @@ function craftItem(id){
   console.log(itemtoMake.name + ":")
   console.log(items[component1].name + " : " + qty1)
   console.log(items[component2].name + " : " + qty2);
-if (itemList.includes(items[component1])=== false || itemList.includes(items[component2])=== false){
-console.log("You do not posses the required items");
-alert.classList.remove('slideanim');
-alert.classList.add ('slide');
-alert.style.display="block";
-alert.style.opacity="1";
-alert.style.backgroundColor="red";
-ALERT.innerHTML="You do not posses the required materials";
-//setTimeout(function(){alert.classList.add ('slide')},50);
-}
-else if (itemList[itemList.indexOf(items[component1])].quantity >= qty1 && itemList[itemList.indexOf(items[component2])].quantity >= qty2){
-getItem(itemtoMake.craftedItemId,1);
-removeItem(component1,qty1);
-removeItem(component2,qty2);
-alert.classList.remove('slideanim');
-alert.classList.add ('slide');
-alert.style.display="block";
-alert.style.backgroundColor="green";
-alert.style.opacity="1";
-ALERT.innerHTML="You have sucessfully crated an item";
-}
-else {console.log("You do not posses enough the required items");}
+  if (itemList.includes(items[component1])=== false && itemList.includes(items[component2])=== false){
+    failText.innerHTML="You do not posses any of the items needed";alertTrigger(1);
+  }
+if (itemList.includes(items[component1])=== true && itemList[itemList.indexOf(items[component1])].quantity < qty1)
+  {insf1Text.innerHTML="You do not posses enough " + items[component1].name + ".",alertTrigger(2);
+console.log("You do not posses enough " + items[component1].name + ".")}
+if (itemList.includes(items[component2])=== true && itemList[itemList.indexOf(items[component2])].quantity < qty2)
+  {insf2Text.innerHTML="You do not posses enough " + items[component2].name + ".";alertTrigger(3);
+console.log("You do not posses enough " + items[component2].name + ".")}
+else if (itemList.includes(items[component1])=== true && itemList[itemList.indexOf(items[component1])].quantity >= qty1 && itemList.includes(items[component1])=== true && itemList[itemList.indexOf(items[component2])].quantity >= qty2){
+    getItem(itemtoMake.craftedItemId,1);
+    removeItem(component1,qty1);
+    removeItem(component2,qty2);
+    alertTrigger(0);
+successText.innerHTML="You have successfully crated an item";}
+
 };
 
+function alertTrigger(status){
+if (status == 0){
+ALERTSUCCESS.style.backgroundColor="green";
+ALERTSUCCESS.classList.remove('slideanim');
+ALERTSUCCESS.classList.add ('slide');
+ALERTSUCCESS.style.display="block";
+ALERTSUCCESS.style.opacity="1";}
+if (status == 1){
+ALERTFAIL.classList.remove('slideanim');
+ALERTFAIL.classList.add ('slide');
+ALERTFAIL.style.display="block";
+ALERTFAIL.style.opacity="1";
+ALERTFAIL.style.backgroundColor="red";}
+if (status == 2){
+ALERTINSF1.classList.remove('slideanim');
+ALERTINSF1.classList.add ('slide');
+ALERTINSF1.style.display="block";
+ALERTINSF1.style.opacity="1";
+ALERTINSF1.style.backgroundColor="red";}
+if (status == 3){
+ALERTINSF2.classList.remove('slideanim');
+ALERTINSF2.classList.add ('slide');
+ALERTINSF2.style.display="block";
+ALERTINSF2.style.opacity="1";
+ALERTINSF2.style.backgroundColor="red";}
+}
 
 function getItem(id,times){
 if (itemList.includes(items[id])){
@@ -170,8 +196,6 @@ if (itemList[itemList.indexOf(items[id])].quantity <=0)
 {itemList.splice(itemList.indexOf(items[id]), 1);
 console.log(itemList)}
 }
-
-
 
 function killCheck(){
   if (HP.innerHTML <= 0){
