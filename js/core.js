@@ -25,7 +25,7 @@ goblin = new Monster(2,"Charfeeleon",80,40,0,2,"goblin",0,"Goblin","Mob"),
 troll = new Monster(3,"Jinxy",60,30,0,3,"troll",0,"Troll","Mob"),
 busoye = new Monster(4,"Busoye - The holy",30,15,0,4,"busoye",0,"Human","Mob"),
 kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk",0,"Human","Mob"),
-weisun = new Monster(6,"Weisun - The all BABA",200,1000,0,3,"weisun",0,"Human","Boss")
+weisun = new Monster(6,"Weisun - The all BABA",200,100,0,3,"weisun",0,"Human","Boss")
 ]
 
 function Item(id, name, cost, sellvalue ,quantity, clickaugment, type, imgpath) {
@@ -59,7 +59,7 @@ var upgrd3 = 0;
 
 var currentWeapon = 0;
 var itemList = [];
-var dropChance = 5;
+var dropChance = 10;
 
 var currentTier = 0;
 var timeLimit = 5;
@@ -72,6 +72,7 @@ MONIMG = document.getElementById("monimg");
 INVENTORY = document.getElementById("item-list");
 CRAFTING = document.getElementById("craft-list");
 ALERTSUCCESS = document.getElementById("alert-success");
+ALERTLOOT = document.getElementById("alert-loot");
 ALERTFAIL = document.getElementById("alert-fail");
 ALERTINSF1 = document.getElementById("alert-insufficient-item1");
 ALERTINSF2 = document.getElementById("alert-insufficient-item2");
@@ -208,6 +209,12 @@ ALERTINSF2.classList.add ('slide');
 ALERTINSF2.style.display="block";
 ALERTINSF2.style.opacity="1";
 ALERTINSF2.style.backgroundColor="red";}
+if (status == 4){
+ALERTLOOT.style.backgroundColor="green";
+ALERTLOOT.classList.remove('slideanim');
+ALERTLOOT.classList.add ('slide');
+ALERTLOOT.style.display="block";
+ALERTLOOT.style.opacity="1";}
 }
 
 function getItem(id,times){
@@ -273,7 +280,7 @@ if(currentGold>= 50 && upgrd1 == 0){
 if(currentGold>= 100 && upgrd2 == 0){
   BUTTON[1].disabled=false;}
   else{BUTTON[1].disabled=true}
-if(currentGold>= 200){
+if(currentGold>= 200 && upgrd2 == 0){
   BUTTON[2].disabled=false;}
   else{BUTTON[2].disabled=true}
 }
@@ -292,6 +299,7 @@ console.log(upgrd1,upgrd2,upgrd3);
 }
 
 function getLoot(index){
+let lootText = document.getElementById("loot-text");
 index = currentMonster.drops;
 if (Math.floor(Math.random() * dropChance) >= 3){
   if (itemList.includes(items[index])){
