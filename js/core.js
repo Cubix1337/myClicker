@@ -4,6 +4,7 @@ var currentGold = 0;
 var monHP = 0;
 var killedMons = 0;
 var singleClickV = 10;
+var augmentV = 0;
 var countMonsDefeated = 0;
 
 
@@ -28,13 +29,13 @@ kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk",0,"Human","Mob"
 weisun = new Monster(6,"Weisun - The all BABA",200,100,0,3,"weisun",0,"Human","Boss")
 ]
 
-function Item(id, name, cost, sellvalue ,quantity, clickaugment, type, imgpath) {
+function Item(id, name, cost, sellvalue ,quantity, clickAugment, type, imgpath) {
     this.id = id;
     this.name = name;
     this.cost = cost;
     this.sellvalue = sellvalue;
     this.quantity = quantity;
-    this.clickaugment = clickaugment;
+    this.clickAugment = clickAugment;
     this.type = type;
     this.imgpath = imgpath;
 }
@@ -72,7 +73,7 @@ MONIMG = document.getElementById("monimg");
 INVENTORY = document.getElementById("item-list");
 CRAFTING = document.getElementById("craft-list");
 ALERTSUCCESS = document.getElementById("alert-success");
-ALERTLOOT = document.getElementById("alert-loot");
+ALERTEQUIP = document.getElementById("equip");
 ALERTFAIL = document.getElementById("alert-fail");
 ALERTINSF1 = document.getElementById("alert-insufficient-item1");
 ALERTINSF2 = document.getElementById("alert-insufficient-item2");
@@ -129,7 +130,18 @@ INVENTORY.innerHTML= text;
 function equipmentLoader(){
 let text =  "<table><tr>";
 for (i = 0; i < itemList.length; i++) {
-if(itemList[i].type == "weapon"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"<br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";EQUIPMENT.innerHTML= text;}
+if(itemList[i].type == "weapon"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"onclick='equipWeapon("+itemList[i].id+")'><br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";EQUIPMENT.innerHTML= text;}
+}
+}
+
+function equipWeapon(id){
+var equipText = document.getElementById("equip-text");
+if (id === currentWeapon.id){console.log("you already have this weapon equipt")}
+  else{currentWeapon = items[id]
+augmentV = currentWeapon.clickAugment;
+alertTrigger(5);
+equipText.innerHTML= "You have equipped a " + currentWeapon.name + "."
+console.log("The weapons bonus is "+currentWeapon.clickAugment+" damage. The current clickLv is " + singleClickV + " plus " + augmentV);
 }
 }
 
@@ -186,36 +198,19 @@ successText.innerHTML="You have successfully crated a " + itemtoMake.name + ".";
 
 function alertTrigger(status){
 if (status == 0){
-ALERTSUCCESS.style.backgroundColor="green";
-ALERTSUCCESS.classList.remove('slideanim');
-ALERTSUCCESS.classList.add ('slide');
-ALERTSUCCESS.style.display="block";
-ALERTSUCCESS.style.opacity="1";}
+ALERTSUCCESS.style.backgroundColor="green";ALERTSUCCESS.classList.remove('slideanim');ALERTSUCCESS.classList.add ('slide');ALERTSUCCESS.style.display="block";ALERTSUCCESS.style.opacity="1";}
 if (status == 1){
-ALERTFAIL.classList.remove('slideanim');
-ALERTFAIL.classList.add ('slide');
-ALERTFAIL.style.display="block";
-ALERTFAIL.style.opacity="1";
-ALERTFAIL.style.backgroundColor="red";}
+ALERTFAIL.classList.remove('slideanim');ALERTFAIL.classList.add ('slide');ALERTFAIL.style.display="block";ALERTFAIL.style.opacity="1";ALERTFAIL.style.backgroundColor="red";}
 if (status == 2){
-ALERTINSF1.classList.remove('slideanim');
-ALERTINSF1.classList.add ('slide');
-ALERTINSF1.style.display="block";
-ALERTINSF1.style.opacity="1";
-ALERTINSF1.style.backgroundColor="red";}
+ALERTINSF1.classList.remove('slideanim');ALERTINSF1.classList.add ('slide');ALERTINSF1.style.display="block";ALERTINSF1.style.opacity="1";ALERTINSF1.style.backgroundColor="red";}
 if (status == 3){
-ALERTINSF2.classList.remove('slideanim');
-ALERTINSF2.classList.add ('slide');
-ALERTINSF2.style.display="block";
-ALERTINSF2.style.opacity="1";
-ALERTINSF2.style.backgroundColor="red";}
+ALERTINSF2.classList.remove('slideanim');ALERTINSF2.classList.add ('slide');ALERTINSF2.style.display="block";ALERTINSF2.style.opacity="1";ALERTINSF2.style.backgroundColor="red";}
 if (status == 4){
-ALERTLOOT.style.backgroundColor="green";
-ALERTLOOT.classList.remove('slideanim');
-ALERTLOOT.classList.add ('slide');
-ALERTLOOT.style.display="block";
-ALERTLOOT.style.opacity="1";}
+ALERTLOOT.style.backgroundColor="green";ALERTLOOT.classList.remove('slideanim');ALERTLOOT.classList.add ('slide');ALERTLOOT.style.display="block";ALERTLOOT.style.opacity="1";}
+if (status == 5){
+ALERTEQUIP.style.backgroundColor="green";ALERTEQUIP.classList.remove('slideanim');ALERTEQUIP.classList.add ('slide');ALERTEQUIP.style.display="block";ALERTEQUIP.style.opacity="1";}
 }
+
 
 function getItem(id,times){
 if (itemList.includes(items[id])){
@@ -253,7 +248,7 @@ monsterLoader();
 
 function removeHP(){
 killCheck();
-HP.innerHTML=HP.innerHTML-singleClickV;
+HP.innerHTML=HP.innerHTML-singleClickV-augmentV;
 killCheck();
 }
 
