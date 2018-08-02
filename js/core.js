@@ -86,7 +86,8 @@ monsterLoader();
 function monsterLoader(){
 MONIMG.classList.remove('fader')
 MONIMG.classList.add ('faderanim')
-currentMonster = monsters[Math.floor(Math.random() * monsters.length)];
+let filtered = monsters.filter(function(el) {return el.monClass === "Mob";});
+currentMonster = monsters[Math.floor(Math.random() * filtered.length)];
 HP.innerHTML = currentMonster.hp;
 MONNAME.innerHTML = currentMonster.name;
 MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
@@ -109,11 +110,16 @@ if (monsters[i].monClass == "Boss"){
 }
 var timeLimit = setInterval(timer,1000);
 function timer (){
-if (TIMER.innerHTML==0){clearInterval(timeLimit);monsterLoader()}
-  else{TIMER.innerHTML=TIMER.innerHTML-1}
+if (TIMER.innerHTML==0){clearInterval(timeLimit);monsterLoader();TIMER.innerHTML=5;}
+else{TIMER.innerHTML=TIMER.innerHTML-1;}
 }
+function killListen(){
+  while (HP.innerHTML >0) {killCheck();
+    if (HP.innerHTML ==0){clearInterval(timeLimit);monsterLoader();break;}
+  }
 }
 
+}
 
 function inventoryLoader(){
 if (itemList.length === 0){CRAFTING.innerHTML="You've got nothing left!<br><img src='Images/ianbeale.gif'"}
@@ -275,7 +281,7 @@ if(currentGold>= 50 && upgrd1 == 0){
 if(currentGold>= 100 && upgrd2 == 0){
   BUTTON[1].disabled=false;}
   else{BUTTON[1].disabled=true}
-if(currentGold>= 200 && upgrd2 == 0){
+if(currentGold>= 200 && upgrd3 == 0){
   BUTTON[2].disabled=false;}
   else{BUTTON[2].disabled=true}
 }
