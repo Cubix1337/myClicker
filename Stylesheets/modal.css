@@ -78,6 +78,7 @@ position: relative;
     padding: 8px;
     text-align:center;
 }
+#item-list{overflow-x: scroll;}
 
 .modal-content::-webkit-scrollbar {
     width: 0px;
