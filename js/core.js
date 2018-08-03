@@ -63,7 +63,15 @@ var itemList = [];
 var dropChance = 10;
 
 var currentTier = 0;
-var timeLimit = 5;
+var timerRun = false;
+if (timerRun == false){console.log("I do nothing")}else{
+var timeLimit = setInterval(function(){
+if (HP.innerHTML !=0 && TIMER.innerHTML !=0){TIMER.innerHTML=TIMER.innerHTML-1;console.log("time remains")}
+if (TIMER.innerHTML==0){console.log("you failed to kill the boss");clearInterval(timeLimit);monsterLoader();TIMER.innerHTML=5;}
+},1000);}
+
+
+
 
 GOLD = document.getElementById("gold");
 HP = document.getElementById("hp");
@@ -108,18 +116,14 @@ if (monsters[i].monClass == "Boss"){
   setTimeout(function(){MONIMG.classList.add ('fader')},50)
 }
 }
-var timeLimit = setInterval(timer,1000);
-function timer (){
-if (TIMER.innerHTML==0){clearInterval(timeLimit);monsterLoader();TIMER.innerHTML=5;}
-else{TIMER.innerHTML=TIMER.innerHTML-1;}
 }
-function killListen(){
-  while (HP.innerHTML >0) {killCheck();
-    if (HP.innerHTML ==0){clearInterval(timeLimit);monsterLoader();break;}
-  }
-}
+// var timeLimit = setInterval(function(){
+//   if (timerRun = false){console.log("I do nothing")}
+// else if (HP.innerHTML !=0 && TIMER.innerHTML !=0){TIMER.innerHTML=TIMER.innerHTML-1;console.log("time remains")}
+// else if (TIMER.innerHTML==0){console.log("you failed to kill the boss");clearInterval(timeLimit);monsterLoader();TIMER.innerHTML=5;}
+// },1000);
 
-}
+
 
 function inventoryLoader(){
 if (itemList.length === 0){CRAFTING.innerHTML="You've got nothing left!<br><img src='Images/ianbeale.gif'"}
@@ -240,7 +244,6 @@ console.log(itemList)}
 
 function killCheck(){
   if (HP.innerHTML <= 0){
-    HP.innerHTML = 0;
     currentMonster.killcount++;
     currentGold = currentGold + currentMonster.gold;
     GOLD.innerHTML = currentGold;
@@ -248,14 +251,13 @@ function killCheck(){
 console.log(currentMonster.name + " has been killed " + currentMonster.killcount + " time(s).");
 killedMons++;
 getLoot();
+if (HP.innerHTML <= 0 && TIMER.innerHTML!=5){;console.log("boss killed");clearInterval(timeLimit);}
 monsterLoader();
 }
 }
 
 function removeHP(){
-killCheck();
 HP.innerHTML=HP.innerHTML-singleClickV-augmentV;
-killCheck();
 }
 
 //bugged for now
