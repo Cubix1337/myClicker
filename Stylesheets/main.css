@@ -25,16 +25,20 @@ body{
 }
 */
 .alert {
-    padding: 5px;
-    background-color: #f44336;
-    color: white;
-    display:none;
-    transition: opacity 1s;
+  background-color: #f44336;
+  color: white;
+  display: none;
+  transition: opacity 1s;
+  z-index: 900;
+  position: absolute;
+  top: 22%;
+  width: 100%;
 }
 
 .closebtn {
-    margin-left: 15px;
-    margin-top: 5px;
+  margin-left: 15px;
+    margin-top: 15px;
+    margin-right: 10px;
     color: white;
     font-weight: bold;
     float: right;
