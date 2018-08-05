@@ -1,25 +1,85 @@
 #page-container{
   width: 100%;
   max-width:800px;
-margin:auto;
+  margin:auto;
   float: none;
   transition: all 1s ease;
 }
+#timer-container{display: none;}
+#monimg:hover,.button:hover{cursor: pointer;}
+#item-list{overflow-x: auto;}
 
-#monimg:hover,.button:hover{
-  cursor: pointer;
+.progress{
+overflow: hidden;
+background-color: #f5f5f5;
+border-radius: 20px;
+-webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+margin-top: 20px;
+width: 75%;
 }
+
+
+.progress-bar.active, .progress.active .progress-bar {
+    -webkit-animation: progress-bar-stripes 2s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
+    -o-animation: progress-bar-stripes 2s linear infinite;
+    animation: progress-bar-stripes 2s linear infinite;
+}
+
+.progress-bar-striped, .progress-striped .progress-bar {
+    background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-size: 40px 40px;
+}
+.progress-bar {
+    float: left;
+    width: 100%;
+    min-width: 10%;
+    height: 50px;
+    font-size: 20px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    background-color: #ff0000eb;
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    -webkit-transition: width .6s ease;
+    -o-transition: width .6s ease;
+    transition: width .6s ease;
+  font-size: 20px;
+  margin:0px;
+}
+.progress-bar span{
+  position: relative;
+  top: 25%;
+}
+
+
+    @-webkit-keyframes progress-bar-stripes {
+      from  { background-position: 40px 0; }
+      to    { background-position: 0 0; }
+    }
+
+    @keyframes progress-bar-stripes {
+      from  { background-position: 40px 0; }
+      to    { background-position: 0 0; }
+    }
+
+
+#alert-loot{
+  width:30%;
+  position: fixed
+  top:0px;
+  left:0px;
+display: inline-block;
+}
+
 img {max-height: 250px;}
 td {
     text-align: center;
     padding:5px;
 }
 
-body{
-  background: url("Images/1280656476626.jpg") no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-}
 /*body,html, .button {
    cursor: url(cursor.gif), pointer;
 }
@@ -31,8 +91,21 @@ body{
   transition: opacity 1s;
   z-index: 900;
   position: absolute;
-  top: 22%;
-  width: 100%;
+  top: 21%;
+  width: 99%;
+  margin: auto;
+}
+
+.boss-alert{
+  position: absolute;
+  top: 10%;
+}
+
+.equipt-item{
+  position: relative;
+  top: -52px;
+  left: 16px;
+  color: white;
 }
 
 .closebtn {
@@ -51,6 +124,48 @@ body{
 .closebtn:hover {
     color: black;
 }
+  .button:hover {
+  	color: white;
+    background-position:left top;
+    transform: scale(1.15);
+    transition: 0.2s;
+    outline:0;
+    border:none;
+  }
+
+  .button{
+    background: none;
+    background: linear-gradient(to right,#ef0606 50%, white 50%);
+    background-size: 200% 100%;
+    background-position: right bottom;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    padding: 6px;
+    border-bottom-style: none;
+    border-top-style: none;
+    border-color: red;
+    outline:0;
+}
+
+.button:active {
+  	position:relative;
+  	top:1.5px;
+    border: none;
+    outline:0;
+    transition: 0.3s;
+
+  }
+
+button:focus {outline: 0;}
+input:disabled:hover{
+  background-color: none;
+  transform: none;
+  background-position:right bottom;
+  color: #545454;
+  cursor: not-allowed;
+}
+
 .slideanim {visibility:hidden;}
 .slide {
     animation-name: slide;
