@@ -1,12 +1,32 @@
 //Variables and arrays
-var a = 0;
+GOLD = document.getElementById("gold");
+HP = document.getElementById("hp");
+BUTTON = document.getElementsByClassName("button");
+MONNAME = document.getElementById("monName");
+MONIMG = document.getElementById("monimg");
+INVENTORY = document.getElementById("item-list");
+CRAFTING = document.getElementById("craft-list");
+ALERTSUCCESS = document.getElementById("alert-success");
+ALERTEQUIP = document.getElementById("equip");
+ALERTFAIL = document.getElementById("alert-fail");
+ALERTINSF1 = document.getElementById("alert-insufficient-item1");
+ALERTINSF2 = document.getElementById("alert-insufficient-item2");
+EQUIPMENT = document.getElementById("equipment-list");
+TIMER = document.getElementById("timer");
+TIMERCONTAINER = document.getElementById("timer-container");
+BOSSKILL = document.getElementById("alert-boss-kill");
+STATS  = document.getElementById("stats-list");
+HPGUAGE = document.getElementById("hp-guage");
+HPGUAGEBAR = document.getElementById("guage-bar");
+HPGUAGEWIDTH = HPGUAGEBAR.offsetWidth; 
+
 var currentGold = 0;
 var monHP = 0;
-var killedMons = 0;
+var currentMonster = 0;
 var singleClickV = 10;
 var augmentV = 0;
-var countMonsDefeated = 0;
-
+var bossTimeLimit = 10;
+TIMER.innerHTML=bossTimeLimit;
 
 function Monster(id, name, hp, gold, killcount, drops, imgpath, monTier, monType, monClass){
     this.id = id;
@@ -24,9 +44,9 @@ var monsters = [
 ogre = new Monster(1,"Mike Miller",100,50,0,1,"ogre",0,"Ogre","Mob"),
 goblin = new Monster(2,"Charfeeleon",80,40,0,2,"goblin",0,"Goblin","Mob"),
 troll = new Monster(3,"Jinxy",60,30,0,3,"troll",0,"Troll","Mob"),
-busoye = new Monster(4,"Busoye - The holy",30,15,0,4,"busoye",0,"Human","Mob"),
+busoye = new Monster(4,"Busoye - The holy",30,15,0,3,"busoye",0,"Human","Mob"),
 kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk",0,"Human","Mob"),
-weisun = new Monster(6,"Weisun - The all BABA",200,100,0,3,"weisun",0,"Human","Boss")
+weisun = new Monster(6,"Weisun - The all BABA",500,250,0,4,"weisun",0,"Human","Boss")
 ]
 
 function Item(id, name, cost, sellvalue ,quantity, clickAugment, type, imgpath) {
@@ -53,45 +73,34 @@ steelSword = new Item(8,"Steel Sword",100,50,0,40,"weapon","steel_sword"),
 diamondSword = new Item(9,"Diamond Sword",100,50,0,50,"weapon","kk")
 ];
 
-var currentMonster = 4;
+var bossDrops = [
+  wood5steel5 = [0,5,3,5]
+]
+//For stats tracking
+var killedMons = 0;
 var upgrd1 = 0;
 var upgrd2 = 0;
 var upgrd3 = 0;
-
+var dps = singleClickV+augmentV;
+//
 var currentWeapon = 0;
 var itemList = [];
 var dropChance = 10;
 
 var currentTier = 0;
 var timerRun = false;
-if (timerRun == false){console.log("I do nothing")}else{
+var timeElapsed = (TIMER.innerHTML);
+
 var timeLimit = setInterval(function(){
-if (HP.innerHTML !=0 && TIMER.innerHTML !=0){TIMER.innerHTML=TIMER.innerHTML-1;console.log("time remains")}
-if (TIMER.innerHTML==0){console.log("you failed to kill the boss");clearInterval(timeLimit);monsterLoader();TIMER.innerHTML=5;}
-},1000);}
-
-
-
-
-GOLD = document.getElementById("gold");
-HP = document.getElementById("hp");
-BUTTON = document.getElementsByClassName("button");
-MONNAME = document.getElementById("monName");
-MONIMG = document.getElementById("monimg");
-INVENTORY = document.getElementById("item-list");
-CRAFTING = document.getElementById("craft-list");
-ALERTSUCCESS = document.getElementById("alert-success");
-ALERTEQUIP = document.getElementById("equip");
-ALERTFAIL = document.getElementById("alert-fail");
-ALERTINSF1 = document.getElementById("alert-insufficient-item1");
-ALERTINSF2 = document.getElementById("alert-insufficient-item2");
-EQUIPMENT = document.getElementById("equipment-list");
-TIMER = document.getElementById("timer");
+if (timerRun == true){setTimeout(function(){TIMER.classList.add ('fader')},50);setTimeout(function(){TIMER.classList.remove ('fader')},1000 );TIMER.innerHTML=TIMER.innerHTML-1;}
+if (TIMER.innerHTML==0){alertTrigger(7);var bossKillAlert = document.getElementById("boss-text");bossKillAlert.innerHTML="You failed to kill the boss-man, man.";monsterLoader();timerRun = false;TIMER.innerHTML=bossTimeLimit;TIMERCONTAINER.style.display="none"}
+},1000);
 
 //set to ondoc load later
 monsterLoader();
 
 function monsterLoader(){
+HPGUAGE.style.width = HPGUAGEWIDTH;
 MONIMG.classList.remove('fader')
 MONIMG.classList.add ('faderanim')
 let filtered = monsters.filter(function(el) {return el.monClass === "Mob";});
@@ -103,7 +112,8 @@ setTimeout(function(){MONIMG.classList.add ('fader')},50)
 }
 
 function bossLoader(){
-TIMER.style.display="block";
+TIMERCONTAINER.style.display="inline-block";
+
 //tier = currentTier;
 for (i = 0; i < monsters.length; i++) {
 if (monsters[i].monClass == "Boss"){
@@ -113,16 +123,16 @@ if (monsters[i].monClass == "Boss"){
   HP.innerHTML = currentMonster.hp;
   MONNAME.innerHTML = currentMonster.name;
   MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
-  setTimeout(function(){MONIMG.classList.add ('fader')},50)
+  setTimeout(function(){MONIMG.classList.add ('fader')},50);
+  timerRun = true;
 }
 }
 }
-// var timeLimit = setInterval(function(){
-//   if (timerRun = false){console.log("I do nothing")}
-// else if (HP.innerHTML !=0 && TIMER.innerHTML !=0){TIMER.innerHTML=TIMER.innerHTML-1;console.log("time remains")}
-// else if (TIMER.innerHTML==0){console.log("you failed to kill the boss");clearInterval(timeLimit);monsterLoader();TIMER.innerHTML=5;}
-// },1000);
 
+function statsLoader(){
+dps = singleClickV+augmentV;
+STATS.innerHTML="<table><tr><td>DPS:</td><td>"+dps+"</td></tr>"+"<tr><td>Total Monsters Killed: </td><td>"+killedMons+"</td></tr>"
+}
 
 
 function inventoryLoader(){
@@ -150,7 +160,8 @@ if (id === currentWeapon.id){console.log("you already have this weapon equipt")}
   else{currentWeapon = items[id]
 augmentV = currentWeapon.clickAugment;
 alertTrigger(5);
-equipText.innerHTML= "You have equipped a " + currentWeapon.name + "."
+equipText.innerHTML= "You have equipped a " + currentWeapon.name + ".";
+this.
 console.log("The weapons bonus is "+currentWeapon.clickAugment+" damage. The current clickLv is " + singleClickV + " plus " + augmentV);
 }
 }
@@ -219,7 +230,11 @@ if (status == 4){
 ALERTLOOT.style.backgroundColor="green";ALERTLOOT.classList.remove('slideanim');ALERTLOOT.classList.add ('slide');ALERTLOOT.style.display="block";ALERTLOOT.style.opacity="1";}
 if (status == 5){
 ALERTEQUIP.style.backgroundColor="green";ALERTEQUIP.classList.remove('slideanim');ALERTEQUIP.classList.add ('slide');ALERTEQUIP.style.display="block";ALERTEQUIP.style.opacity="1";}
+if (status == 6){
+BOSSKILL.style.backgroundColor="green";BOSSKILL.classList.remove('slideanim');BOSSKILL.classList.add ('slide');BOSSKILL.style.display="block";BOSSKILL.style.opacity="1";}
+if (status == 7){BOSSKILL.style.backgroundColor="red";BOSSKILL.classList.remove('slideanim');BOSSKILL.classList.add ('slide');BOSSKILL.style.display="block";BOSSKILL.style.opacity="1";}
 }
+
 
 
 function getItem(id,times){
@@ -251,13 +266,18 @@ function killCheck(){
 console.log(currentMonster.name + " has been killed " + currentMonster.killcount + " time(s).");
 killedMons++;
 getLoot();
-if (HP.innerHTML <= 0 && TIMER.innerHTML!=5){;console.log("boss killed");clearInterval(timeLimit);}
+if (timerRun == true){timerRun =false;alertTrigger(6);TIMERCONTAINER.style.display="none";getItem(wood5steel5[0],wood5steel5[1]);getItem(wood5steel5[2],wood5steel5[3]);
+var bossKillAlert = document.getElementById("boss-text");bossKillAlert.innerHTML="<h2>"+currentMonster.name+" has been defeated!</h2><p> You have obtained:</p><h3>"+currentMonster.gold+" gold</h3><p><img src='Images/"+items[wood5steel5[0]].imgpath+".png'</img></p><h3>"+wood5steel5[1]+"x "+items[wood5steel5[0]].name+"</h3><img src='Images/"+items[wood5steel5[2]].imgpath+".png'</img></p><h3>"+wood5steel5[3]+"x "+items[wood5steel5[2]].name+"</h3><p>This feat was acheived in "+ (bossTimeLimit-TIMER.innerHTML) +" seconds.</p><h2> Waow!</h2>";
+;TIMER.innerHTML=bossTimeLimit}
 monsterLoader();
 }
 }
 
 function removeHP(){
 HP.innerHTML=HP.innerHTML-singleClickV-augmentV;
+//width per HP unit
+var widthHp =HPGUAGEWIDTH/currentMonster.hp;
+HPGUAGE.style.width = HP.innerHTML*widthHp;
 }
 
 //bugged for now
@@ -265,8 +285,8 @@ function autoclickeractivate(){
   setInterval(function(){
   killCheck();
 removeHP();
-HP.innerHTML=monHP;
-},750)
+killCheck();
+},1000)
 };
 
 function upgrade(level){
@@ -352,6 +372,7 @@ for (i = 0; i < close.length; i++) {
     setTimeout(function(){div.style.display='none';},600);
   }
 }
+
 
 //useful code
  //onclick="this.parentElement.style.display='none';"
