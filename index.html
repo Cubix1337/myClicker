@@ -6,9 +6,16 @@
     <link href="Stylesheets/main.css" rel="stylesheet" type="text/css">
   <center>
   <h3><span>Gold:</span><span id="gold">0</span></h3>
-  <h3>Time Remaining: <span id="timer">5</span></h3>
+
+  <div class="alert boss-alert slideanim" id="alert-boss-kill">
+    <span class="closebtn">&times;</span>
+    <p id="boss-text"></p>
+  </div>
+
+  <h2 id="timer-container">Time Remaining: <span id="timer">5</span></h2>
   </head>
   <body>
+
 
 <div id ="page-container">
   <input type="button" value="Upgrade level 1"  onclick="upgrade(1),disable(0),clickCount(1)" class="button">
@@ -16,12 +23,14 @@
   <input type="button" value="Upgrade level 3"  onclick="upgrade(3),disable(2),clickCount(3)" class="button">
 <input type="button" value="Auto Clicker Start" onclick="autoclickeractivate()" class="button">
   <input type="button" value="Boss Generator"  onclick="bossLoader()" class="button">
-  <input type="button" value="Items" onclick= "document.getElementById('modal').style.display='block',inventoryLoader(),recipeLoader()" class="modalBtn button">
-
-<h2><span>HP:</span><span id="hp">0</span></h2>
+  <input type="button" value="Menu" onclick= "document.getElementById('modal').style.display='block',inventoryLoader(),recipeLoader(),equipmentLoader(),statsLoader()" class="modalBtn button">
+<div class ="progress" id="guage-bar">
+<h2 class="progress-bar progress-bar-striped active" id="hp-guage"><span>HP:</span><span id="hp">0</span></h2>
+</div>
   <h1 id="monName">Monster Name Here</h1>
 <img src="Images/busoye.png" id = "monimg" onclick="removeHP(),killCheck()">
-</div>
+
+
 <div class="modal" id="modal">
   <div class="modal-content">
     <span onclick="document.getElementById('modal').style.display='none'" class="close">&times;</span>
@@ -29,12 +38,22 @@
       <button class="tablink button" onclick="openTab(event, 'inventory'),inventoryLoader()">Materials</button>
       <button class="tablink button" onclick="openTab(event, 'crafting'),recipeLoader()">Crafting</button>
       <button class="tablink button" onclick="openTab(event, 'equipment'),equipmentLoader()">Equipment</button>
+      <button class="tablink button" onclick="openTab(event, 'upgrading')">Upgrading</button>
       <button class="tablink button" onclick="openTab(event, 'refining')">Refining</button>
+      <button class="tablink button" onclick="openTab(event, 'stats'),statsLoader()">Stats</button>
     </div>
     <div class="modal-body">
 
 
 </div>
+<div id="equipment" class="tabs fader">
+  <div class="alert slideanim" id="equip">
+    <span class="closebtn">&times;</span>
+    <p id="equip-text"></p>
+  </div>
+
+<p id="equipment-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
+          </div>
 <div id="inventory" class="tabs fader">
 <p id="item-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
     </div>
@@ -63,15 +82,22 @@
 <p id="craft-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
 
 </div>
+<div id="upgrading" class="tabs fader">
+<p id="upgrade-list">You've got nothing to upgrade!<br><img src="Images/ianbeale.gif"></p>
+                  </div>
 
-<div id="equipment" class="tabs fader">
-<p id="equipment-list">You've got nothing left!<br><img src="Images/ianbeale.gif"></p>
-          </div>
 
 <div id="refining" class="tabs fader">
 <p id="refine-list">You've got nothing to refine!<br><img src="Images/ianbeale.gif"></p>
                   </div>
+
+<div id="stats" class="tabs fader">
+<p id="stats-list">Here are your stats:</p>
+</div>
+
   </div>
+  </div>
+  <p>ToDo list: add quests, styling, refining, upgrading, re-work alert status to words and re-work positioning, re-work click upgrades: move to upgrades or make unique menu left-side, work more on hp gauge style, maybe rework mobs as gifs?/just bosses?, add dev menu for ez items, work on skills functionality.</p>
   </div>
       <script src="js/core.js"></script>
   </body>
