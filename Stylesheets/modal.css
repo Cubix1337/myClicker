@@ -23,7 +23,7 @@
     padding-right: 10px;
 
 }
-
+.tabs{color:black;}
 .close:hover,
 .close:focus {
     color: black;
@@ -66,19 +66,43 @@ position: relative;
     width: 90%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
 }
+table{color:black;}
 
 #crafting table {
     border-collapse: collapse;
     width: 50%;
 }
+#stats table {
+    border-collapse: collapse;
+    width: 50%;
+}
 
-#crafting td, th {
+#crafting th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
     text-align:center;
 }
-#item-list{overflow-x: scroll;}
+#stats th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    text-align:center;
+}
+
+#stats td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    text-align:center;
+}
+#crafting td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    text-align:center;
+}
+
 
 .modal-content::-webkit-scrollbar {
     width: 0px;
