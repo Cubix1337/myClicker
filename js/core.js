@@ -114,7 +114,7 @@ setTimeout(function(){MONIMG.classList.add ('fader')},50)
 
 function bossLoader(){
 TIMERCONTAINER.style.display="inline-block";
-
+HPGUAGE.style.width = HPGUAGEWIDTH;
 //tier = currentTier;
 for (i = 0; i < monsters.length; i++) {
 if (monsters[i].monClass == "Boss"){
