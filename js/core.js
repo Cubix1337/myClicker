@@ -18,7 +18,7 @@ BOSSKILL = document.getElementById("alert-boss-kill");
 STATS  = document.getElementById("stats-list");
 HPGUAGE = document.getElementById("hp-guage");
 HPGUAGEBAR = document.getElementById("guage-bar");
-HPGUAGEWIDTH = HPGUAGEBAR.offsetWidth; 
+HPGUAGEWIDTH = HPGUAGEBAR.offsetWidth;
 
 var currentGold = 0;
 var monHP = 0;
@@ -46,7 +46,8 @@ goblin = new Monster(2,"Charfeeleon",80,40,0,2,"goblin",0,"Goblin","Mob"),
 troll = new Monster(3,"Jinxy",60,30,0,3,"troll",0,"Troll","Mob"),
 busoye = new Monster(4,"Busoye - The holy",30,15,0,3,"busoye",0,"Human","Mob"),
 kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk",0,"Human","Mob"),
-weisun = new Monster(6,"Weisun - The all BABA",500,250,0,4,"weisun",0,"Human","Boss")
+kaydel = new Monster(6,"Kaydel - The Ultimate Dreidel",500,250,0,4,"kaydel",0,"Human","Boss")
+//weisun = new Monster(7,"Weisun - The all BABA",500,250,0,4,"weisun",0,"Human","Boss")
 ]
 
 function Item(id, name, cost, sellvalue ,quantity, clickAugment, type, imgpath) {
@@ -122,7 +123,7 @@ if (monsters[i].monClass == "Boss"){
   currentMonster = monsters[i];
   HP.innerHTML = currentMonster.hp;
   MONNAME.innerHTML = currentMonster.name;
-  MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
+  MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".gif");
   setTimeout(function(){MONIMG.classList.add ('fader')},50);
   timerRun = true;
 }
