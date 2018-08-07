@@ -260,6 +260,14 @@ console.log(itemList)}
 
 function killCheck(){
   if (HP.innerHTML <= 0){
+    HP.innerHTML = 0;
+    HPGUAGE.style.width = 0;
+    var toggle = false;
+    do {
+        MONIMG.setAttribute("onClick",null);
+        setTimeout(function(){toggle==true;},1000)
+    }
+    while (toggle=false)
     currentMonster.killcount++;
     currentGold = currentGold + currentMonster.gold;
     GOLD.innerHTML = currentGold;
@@ -270,7 +278,7 @@ getLoot();
 if (timerRun == true){timerRun =false;alertTrigger(6);TIMERCONTAINER.style.display="none";getItem(wood5steel5[0],wood5steel5[1]);getItem(wood5steel5[2],wood5steel5[3]);
 var bossKillAlert = document.getElementById("boss-text");bossKillAlert.innerHTML="<h2>"+currentMonster.name+" has been defeated!</h2><p> You have obtained:</p><h3>"+currentMonster.gold+" gold</h3><p><img src='Images/"+items[wood5steel5[0]].imgpath+".png'</img></p><h3>"+wood5steel5[1]+"x "+items[wood5steel5[0]].name+"</h3><img src='Images/"+items[wood5steel5[2]].imgpath+".png'</img></p><h3>"+wood5steel5[3]+"x "+items[wood5steel5[2]].name+"</h3><p>This feat was acheived in "+ (bossTimeLimit-TIMER.innerHTML) +" seconds.</p><h2> Waow!</h2>";
 ;TIMER.innerHTML=bossTimeLimit}
-monsterLoader();
+setTimeout(function(){monsterLoader();MONIMG.setAttribute("onClick","removeHP(),killCheck()");HPGUAGE.style.width = HPGUAGEWIDTH;},1000);
 }
 }
 
@@ -283,11 +291,10 @@ HPGUAGE.style.width = HP.innerHTML*widthHp;
 
 //bugged for now
 function autoclickeractivate(){
-  setInterval(function(){
-  killCheck();
-removeHP();
-killCheck();
-},1000)
+setInterval(function(){
+  if (HP.innerHTML > 0){removeHP();killCheck();};
+},750)
+
 };
 
 function upgrade(level){
