@@ -24,8 +24,9 @@
 <input type="button" value="Auto Clicker Start" onclick="autoclickeractivate()" class="button">
   <input type="button" value="Boss Generator"  onclick="bossLoader()" class="button">
   <input type="button" value="Menu" onclick= "document.getElementById('modal').style.display='block',inventoryLoader(),recipeLoader(),equipmentLoader(),statsLoader()" class="modalBtn button">
-<div class ="progress" id="guage-bar">
-<h2 class="progress-bar progress-bar-striped active" id="hp-guage"><span>HP:</span><span id="hp">0</span></h2>
+<div class ="progress" id="guage-bar"><span class="hp">HP: <span class="hp" id="hp">0</span></span>
+<h2 class="progress-bar progress-bar-striped active" id="hp-guage"></h2>
+
 </div>
   <h1 id="monName">Monster Name Here</h1>
 <img src="Images/busoye.png" id = "monimg" onclick="removeHP(),killCheck()">
