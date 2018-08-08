@@ -46,8 +46,12 @@ goblin = new Monster(2,"Charfeeleon",80,40,0,2,"goblin",0,"Goblin","Mob"),
 troll = new Monster(3,"Jinxy",60,30,0,3,"troll",0,"Troll","Mob"),
 busoye = new Monster(4,"Busoye - The holy",30,15,0,3,"busoye",0,"Human","Mob"),
 kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk",0,"Human","Mob"),
-kaydel = new Monster(6,"Kaydel - The Ultimate Dreidel",500,250,0,4,"kaydel",0,"Human","Boss")
-//weisun = new Monster(7,"Weisun - The all BABA",500,250,0,4,"weisun",0,"Human","Boss")
+//boses
+kaydel = new Monster(6,"Kaydel - The Ultimate Dreidel",2000,1000,0,5,"kaydel",0,"Human","Boss"),
+//weisun = new Monster(7,"Weisun - The All-BABA",500,250,0,4,"weisun",0,"Human","Boss"),
+kk = new Monster(8,"Karkeui - The Mother of Deer",800,400,0,1,"kkmother",0,"Human","Boss"),
+richie = new Monster(9,"Richie - The Groove Master",1000,500,0,2,"richie",0,"Human","Boss"),
+bu = new Monster(10,"DisaBu - Not Best Pleased",1400,700,0,4,"disabuu",0,"Human","Boss")
 ]
 
 function Item(id, name, cost, sellvalue ,quantity, clickAugment, type, imgpath) {
@@ -75,7 +79,12 @@ diamondSword = new Item(9,"Diamond Sword",100,50,0,50,"weapon","kk")
 ];
 
 var bossDrops = [
-  wood5steel5 = [0,5,3,5]
+  wood5steel5 = [0,5,3,5],
+  wood10steel5 = [0,10,3,5],
+  bronze5steel5 = [2,5,3,5],
+  bronze10steel5 = [2,10,3,5],
+  bronze5wood5 = [2,5,0,5],
+  bronze10wood5 = [2,10,0,5]
 ]
 //For stats tracking
 var killedMons = 0;
@@ -105,7 +114,7 @@ HPGUAGE.style.width = HPGUAGEWIDTH;
 MONIMG.classList.remove('fader')
 MONIMG.classList.add ('faderanim')
 let filtered = monsters.filter(function(el) {return el.monClass === "Mob";});
-currentMonster = monsters[Math.floor(Math.random() * filtered.length)];
+currentMonster = filtered[Math.floor(Math.random() * filtered.length)];
 HP.innerHTML = currentMonster.hp;
 MONNAME.innerHTML = currentMonster.name;
 MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
@@ -115,20 +124,17 @@ setTimeout(function(){MONIMG.classList.add ('fader')},50)
 function bossLoader(){
 TIMERCONTAINER.style.display="inline-block";
 HPGUAGE.style.width = HPGUAGEWIDTH;
-//tier = currentTier;
-for (i = 0; i < monsters.length; i++) {
-if (monsters[i].monClass == "Boss"){
-  MONIMG.classList.remove('fader')
-  MONIMG.classList.add ('faderanim')
-  currentMonster = monsters[i];
-  HP.innerHTML = currentMonster.hp;
-  MONNAME.innerHTML = currentMonster.name;
-  MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".gif");
+let filtered = monsters.filter(function(el) {return el.monClass == "Boss";});
+currentMonster = filtered[Math.floor(Math.random() * filtered.length)];
+MONIMG.classList.remove('fader')
+MONIMG.classList.add ('faderanim')
+HP.innerHTML = currentMonster.hp;
+MONNAME.innerHTML = currentMonster.name;
+MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".gif");
   setTimeout(function(){MONIMG.classList.add ('fader')},50);
   timerRun = true;
 }
-}
-}
+//}}
 
 function statsLoader(){
 dps = singleClickV+augmentV;
@@ -265,7 +271,7 @@ function killCheck(){
     var toggle = false;
     do {
         MONIMG.setAttribute("onClick",null);
-        setTimeout(function(){toggle==true;},1000)
+        setTimeout(function(){toggle==true;},500)
     }
     while (toggle=false)
     currentMonster.killcount++;
@@ -275,12 +281,17 @@ function killCheck(){
 console.log(currentMonster.name + " has been killed " + currentMonster.killcount + " time(s).");
 killedMons++;
 getLoot();
-if (timerRun == true){timerRun =false;alertTrigger(6);TIMERCONTAINER.style.display="none";getItem(wood5steel5[0],wood5steel5[1]);getItem(wood5steel5[2],wood5steel5[3]);
-var bossKillAlert = document.getElementById("boss-text");bossKillAlert.innerHTML="<h2>"+currentMonster.name+" has been defeated!</h2><p> You have obtained:</p><h3>"+currentMonster.gold+" gold</h3><p><img src='Images/"+items[wood5steel5[0]].imgpath+".png'</img></p><h3>"+wood5steel5[1]+"x "+items[wood5steel5[0]].name+"</h3><img src='Images/"+items[wood5steel5[2]].imgpath+".png'</img></p><h3>"+wood5steel5[3]+"x "+items[wood5steel5[2]].name+"</h3><p>This feat was acheived in "+ (bossTimeLimit-TIMER.innerHTML) +" seconds.</p><h2> Waow!</h2>";
+if (timerRun == true){timerRun =false;alertTrigger(6);TIMERCONTAINER.style.display="none";bossDrop();
+var bossKillAlert = document.getElementById("boss-text");bossKillAlert.innerHTML="<h2>"+currentMonster.name+" has been defeated!</h2><p> You have obtained:</p><h3>"+currentMonster.gold+" gold</h3><p><img src='Images/"+items[bossDrops[currentMonster.drops][0]].imgpath+".png'</img></p><h3>"+bossDrops[currentMonster.drops][1]+"x "+items[bossDrops[currentMonster.drops][0]].name+"</h3><img src='Images/"+items[bossDrops[currentMonster.drops][2]].imgpath+".png'</img></p><h3>"+bossDrops[currentMonster.drops][3]+"x "+items[bossDrops[currentMonster.drops][2]].name+"</h3><p>This feat was acheived in "+ (bossTimeLimit-TIMER.innerHTML) +" seconds.</p><h2> Waow!</h2>";
 ;TIMER.innerHTML=bossTimeLimit}
-setTimeout(function(){monsterLoader();MONIMG.setAttribute("onClick","removeHP(),killCheck()");HPGUAGE.style.width = HPGUAGEWIDTH;},1000);
+setTimeout(function(){monsterLoader();MONIMG.setAttribute("onClick","removeHP(),killCheck()");HPGUAGE.style.width = HPGUAGEWIDTH;},500);
 }
 }
+
+function bossDrop(){
+getItem(bossDrops[currentMonster.drops][0],bossDrops[currentMonster.drops][1]);
+getItem(bossDrops[currentMonster.drops][2],bossDrops[currentMonster.drops][3]);
+};
 
 function removeHP(){
 HP.innerHTML=HP.innerHTML-singleClickV-augmentV;
@@ -289,7 +300,7 @@ var widthHp =HPGUAGEWIDTH/currentMonster.hp;
 HPGUAGE.style.width = HP.innerHTML*widthHp;
 }
 
-//bugged for now
+//bugged for now due to interaction with bosses
 function autoclickeractivate(){
 setInterval(function(){
   if (HP.innerHTML > 0){removeHP();killCheck();};
