@@ -6,6 +6,7 @@ MONNAME = document.getElementById("monName");
 MONIMG = document.getElementById("monimg");
 INVENTORY = document.getElementById("item-list");
 CRAFTING = document.getElementById("craft-list");
+UPGRADE = document.getElementById("upgrade-list");
 ALERTSUCCESS = document.getElementById("alert-success");
 ALERTEQUIP = document.getElementById("equip");
 ALERTFAIL = document.getElementById("alert-fail");
@@ -19,6 +20,7 @@ STATS  = document.getElementById("stats-list");
 HPGUAGE = document.getElementById("hp-guage");
 HPGUAGEBAR = document.getElementById("guage-bar");
 HPGUAGEWIDTH = HPGUAGEBAR.offsetWidth;
+
 
 var currentGold = 0;
 var monHP = 0;
@@ -54,28 +56,29 @@ richie = new Monster(9,"Richie - The Groove Master",1000,500,0,2,"richie",0,"Hum
 bu = new Monster(10,"DisaBu - Not Best Pleased",1400,700,0,4,"disabuu",0,"Human","Boss")
 ]
 
-function Item(id, name, cost, sellvalue ,quantity, clickAugment, type, imgpath) {
+function Item(id, name, cost, sellvalue ,quantity, refine, clickAugment, type, imgpath) {
     this.id = id;
     this.name = name;
     this.cost = cost;
     this.sellvalue = sellvalue;
     this.quantity = quantity;
+    this.refine = refine;
     this.clickAugment = clickAugment;
     this.type = type;
     this.imgpath = imgpath;
 }
 
 var items = [
-wood = new Item(0,"Wood",10,5,0,0,"loot","wood"),
-coal = new Item(1,"Coal",10,5,0,0,"loot","coal"),
-bronze = new Item(2,"Bronze",20,10,0,0,"loot","bronze"),
-steel = new Item(3,"Steel",200,100,0,0,"loot","steel"),
-diamond = new Item(4,"Diamond",2000,1000,0,0,"loot","diamond"),
-woodenSword = new Item(5,"Wooden Sword",100,50,0,10,"weapon","wooden_sword"),
-bronzeSword = new Item(6,"Bronze Sword",100,50,0,20,"weapon","bronze_sword"),
-ironSword = new Item(7,"Iron Sword",100,50,0,30,"weapon","iron_sword"),
-steelSword = new Item(8,"Steel Sword",100,50,0,40,"weapon","steel_sword"),
-diamondSword = new Item(9,"Diamond Sword",100,50,0,50,"weapon","kk")
+wood = new Item(0,"Wood",10,5,0,0,0,"Loot","wood"),
+coal = new Item(1,"Coal",10,5,0,0,0,"Loot","coal"),
+bronze = new Item(2,"Bronze",20,10,0,0,0,"Loot","bronze"),
+steel = new Item(3,"Steel",200,100,0,0,0,"Loot","steel"),
+diamond = new Item(4,"Diamond",2000,1000,0,0,0,"Loot","diamond"),
+woodenSword = new Item(5,"Wooden Sword",100,50,0,0,0,10,"Weapon","wooden_sword"),
+bronzeSword = new Item(6,"Bronze Sword",100,50,0,0,20,"Weapon","bronze_sword"),
+ironSword = new Item(7,"Iron Sword",100,50,0,0,30,"Weapon","iron_sword"),
+steelSword = new Item(8,"Steel Sword",100,50,0,0,40,"Weapon","steel_sword"),
+diamondSword = new Item(9,"Diamond Sword",100,50,0,0,50,"Weapon","kk")
 ];
 
 var bossDrops = [
@@ -96,6 +99,7 @@ var dps = singleClickV+augmentV;
 var currentWeapon = 0;
 var itemList = [];
 var dropChance = 10;
+var baseRate = 20;
 
 var currentTier = 0;
 var timerRun = false;
@@ -147,7 +151,7 @@ if (itemList.length === 0){CRAFTING.innerHTML="You've got nothing left!<br><img 
 else {
 let text =  "<table><tr>";
 for (i = 0; i < itemList.length; i++) {
-if(itemList[i].type == "loot"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"<br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
+if(itemList[i].type == "Loot"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"<br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
 }
 INVENTORY.innerHTML= text;
 }
@@ -156,9 +160,36 @@ INVENTORY.innerHTML= text;
 
 function equipmentLoader(){
 let text =  "<table><tr>";
-for (i = 0; i < itemList.length; i++) {
-if(itemList[i].type == "weapon"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"onclick='equipWeapon("+itemList[i].id+")'><br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";EQUIPMENT.innerHTML= text;}
+//for (i = 0; i < itemList.length; i++) {
+//if(itemList[i].type == "weapon"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"onclick='equipWeapon("+itemList[i].id+")'><br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";EQUIPMENT.innerHTML= text;}
+let filtered = itemList.filter(function(el) {return el.type == "Weapon";});
+if (filtered.length >0){
+for (i = 0; i < filtered.length; i++) {
+text += "<td>" + "<img src = 'Images/" + filtered[i].imgpath + ".png'" +"onclick='equipWeapon("+filtered[i].id+")'><br><br>" + filtered[i].name + ":" + filtered[i].quantity +"</td>";
 }
+}else{text = "<p>You've got no equipment left!<br><img src='Images/ianbeale.gif'></p>";}
+EQUIPMENT.innerHTML= text;
+}
+
+function upgradeLoader(){
+let text =  "<table><tr>";
+for (i = 0; i < itemList.length; i++) {
+if(itemList[i].type == "weapon"){text +="<p>Select the weapon you wish to upgrade</p><td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"onclick='weaponUpgrade("+itemList[i].id+")'><br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
+UPGRADE.innerHTML= text;}
+}
+}
+
+function upgradeWeapon(){
+let bonusRate = 0;
+console.log(currentWeapon.refine);
+if(currentWeapon.refine <=4){bonusRate=100}
+if(currentWeapon.refine >=5 && currentWeapon.refine<=6){bonusRate=30}
+if(currentWeapon.refine >=7 && currentWeapon.refine<=8){bonusRate=10}
+if(currentWeapon.refine ==9){bonusRate=-20}
+let chance = Math.floor(Math.random() * 100) + bonusRate + baseRate;
+console.log(chance);
+if(chance <=80){removeItem(items.indexOf(currentWeapon),1);console.log("failed",currentWeapon);}
+else{currentWeapon.refine++;}
 }
 
 function equipWeapon(id){
@@ -256,7 +287,7 @@ if (itemList.includes(items[id])){
 
 function removeItem(id,qty){
 //if (itemList.includes(items[id])){
-items[id].quantity -=qty;
+itemList[itemList.indexOf(items[id])].quantity -=qty;
 console.log("you lose " + qty +" "+ items[id].name+"(s)");
 console.log(itemList);
 if (itemList[itemList.indexOf(items[id])].quantity <=0)
