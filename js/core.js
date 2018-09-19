@@ -7,6 +7,7 @@ MONIMG = document.getElementById("monimg");
 INVENTORY = document.getElementById("item-list");
 CRAFTING = document.getElementById("craft-list");
 UPGRADE = document.getElementById("upgrade-list");
+UPGRADEFAIL = document.getElementById("upgrade-fail");
 ALERTSUCCESS = document.getElementById("alert-success");
 ALERTEQUIP = document.getElementById("equip");
 ALERTFAIL = document.getElementById("alert-fail");
@@ -20,7 +21,7 @@ STATS  = document.getElementById("stats-list");
 HPGUAGE = document.getElementById("hp-guage");
 HPGUAGEBAR = document.getElementById("guage-bar");
 HPGUAGEWIDTH = HPGUAGEBAR.offsetWidth;
-
+QUEST = document.getElementById("quest-pannel");
 
 var currentGold = 0;
 var monHP = 0;
@@ -74,7 +75,7 @@ coal = new Item(1,"Coal",10,5,0,0,0,"Loot","coal"),
 bronze = new Item(2,"Bronze",20,10,0,0,0,"Loot","bronze"),
 steel = new Item(3,"Steel",200,100,0,0,0,"Loot","steel"),
 diamond = new Item(4,"Diamond",2000,1000,0,0,0,"Loot","diamond"),
-woodenSword = new Item(5,"Wooden Sword",100,50,0,0,0,10,"Weapon","wooden_sword"),
+woodenSword = new Item(5,"Wooden Sword",100,50,0,0,10,"Weapon","wooden_sword"),
 bronzeSword = new Item(6,"Bronze Sword",100,50,0,0,20,"Weapon","bronze_sword"),
 ironSword = new Item(7,"Iron Sword",100,50,0,0,30,"Weapon","iron_sword"),
 steelSword = new Item(8,"Steel Sword",100,50,0,0,40,"Weapon","steel_sword"),
@@ -89,14 +90,15 @@ var bossDrops = [
   bronze5wood5 = [2,5,0,5],
   bronze10wood5 = [2,10,0,5]
 ]
+var currentWeapon = 0;
 //For stats tracking
 var killedMons = 0;
 var upgrd1 = 0;
 var upgrd2 = 0;
 var upgrd3 = 0;
-var dps = singleClickV+augmentV;
+var dps = dpsCalc();
 //
-var currentWeapon = 0;
+
 var itemList = [];
 var dropChance = 10;
 var baseRate = 20;
@@ -141,7 +143,7 @@ MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".gif");
 //}}
 
 function statsLoader(){
-dps = singleClickV+augmentV;
+dpsCalc();
 STATS.innerHTML="<table><tr><td>DPS:</td><td>"+dps+"</td></tr>"+"<tr><td>Total Monsters Killed: </td><td>"+killedMons+"</td></tr>"
 }
 
@@ -165,31 +167,35 @@ let text =  "<table><tr>";
 let filtered = itemList.filter(function(el) {return el.type == "Weapon";});
 if (filtered.length >0){
 for (i = 0; i < filtered.length; i++) {
-text += "<td>" + "<img src = 'Images/" + filtered[i].imgpath + ".png'" +"onclick='equipWeapon("+filtered[i].id+")'><br><br>" + filtered[i].name + ":" + filtered[i].quantity +"</td>";
+text += "<td onclick='this.children[1].classList.add(\"equipt-item\"),this.children[1].classList.remove(\"equipt-hidden\")' style='position:relative'>" + "<img src = 'Images/" + filtered[i].imgpath + ".png'" +"onclick='equipWeapon("+filtered[i].id+")'><span class='equipt-hidden'>E</span><br><br>" + filtered[i].name + ":" + filtered[i].quantity +"</td>";
 }
 }else{text = "<p>You've got no equipment left!<br><img src='Images/ianbeale.gif'></p>";}
 EQUIPMENT.innerHTML= text;
 }
 
+// let target = filtered[i].innerHTML= document.getElementsByClassName('equipt-hidden')
+// this.children[0].classList.add('equip-item').classList.remove('equip-hidden')
+// onclick=
+
 function upgradeLoader(){
-let text =  "<table><tr>";
-for (i = 0; i < itemList.length; i++) {
-if(itemList[i].type == "weapon"){text +="<p>Select the weapon you wish to upgrade</p><td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"onclick='weaponUpgrade("+itemList[i].id+")'><br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
-UPGRADE.innerHTML= text;}
+if(currentWeapon===0){UPGRADE.innerHTML="<p>You've got nothing to upgrade!<br><img src='Images/ianbeale.gif'></p>";}
+else{
+let text =  "<p>Upgrade your "+ currentWeapon.name +" here</p><table><tr><td style='position:relative'><img src = 'Images/" + currentWeapon.imgpath + ".png'><span class='equipt-show'>+"+currentWeapon.refine+"</span>"  + "<br><button class='button' onclick='upgradeWeapon()'>Upgrade</button></div>";
+UPGRADE.innerHTML= text;
 }
 }
 
 function upgradeWeapon(){
-let bonusRate = 0;
-console.log(currentWeapon.refine);
-if(currentWeapon.refine <=4){bonusRate=100}
-if(currentWeapon.refine >=5 && currentWeapon.refine<=6){bonusRate=30}
-if(currentWeapon.refine >=7 && currentWeapon.refine<=8){bonusRate=10}
-if(currentWeapon.refine ==9){bonusRate=-20}
-let chance = Math.floor(Math.random() * 100) + bonusRate + baseRate;
-console.log(chance);
-if(chance <=80){removeItem(items.indexOf(currentWeapon),1);console.log("failed",currentWeapon);}
-else{currentWeapon.refine++;}
+let upgradeFailText = document.getElementById("upgrade-fail-text");
+if (currentWeapon === 0){console.log("You have no weapon")}
+else {if(currentWeapon.refine <=4){bonusRate=100}
+  if(currentWeapon.refine >=5 && currentWeapon.refine<=6){bonusRate=40}
+  if(currentWeapon.refine >=7 && currentWeapon.refine<=8){bonusRate=20}
+  if(currentWeapon.refine ==9){bonusRate=-30};
+let chance = Math.floor(Math.random() * 100) + bonusRate + baseRate;console.log(currentWeapon.refine);console.log(chance);
+if(chance <=80){upgradeFailText.innerHTML="Your +"+currentWeapon.refine+" "+currentWeapon.name+" has broken!";alertTrigger(8);currentWeapon.refine = 0;removeItem(items.indexOf(currentWeapon),1);currentWeapon=0;upgradeLoader();}
+else{currentWeapon.refine++;upgradeLoader();}
+}
 }
 
 function equipWeapon(id){
@@ -199,7 +205,6 @@ if (id === currentWeapon.id){console.log("you already have this weapon equipt")}
 augmentV = currentWeapon.clickAugment;
 alertTrigger(5);
 equipText.innerHTML= "You have equipped a " + currentWeapon.name + ".";
-this.
 console.log("The weapons bonus is "+currentWeapon.clickAugment+" damage. The current clickLv is " + singleClickV + " plus " + augmentV);
 }
 }
@@ -270,7 +275,10 @@ if (status == 5){
 ALERTEQUIP.style.backgroundColor="green";ALERTEQUIP.classList.remove('slideanim');ALERTEQUIP.classList.add ('slide');ALERTEQUIP.style.display="block";ALERTEQUIP.style.opacity="1";}
 if (status == 6){
 BOSSKILL.style.backgroundColor="green";BOSSKILL.classList.remove('slideanim');BOSSKILL.classList.add ('slide');BOSSKILL.style.display="block";BOSSKILL.style.opacity="1";}
-if (status == 7){BOSSKILL.style.backgroundColor="red";BOSSKILL.classList.remove('slideanim');BOSSKILL.classList.add ('slide');BOSSKILL.style.display="block";BOSSKILL.style.opacity="1";}
+if (status == 7){
+BOSSKILL.style.backgroundColor="red";BOSSKILL.classList.remove('slideanim');BOSSKILL.classList.add ('slide');BOSSKILL.style.display="block";BOSSKILL.style.opacity="1";}
+if (status == 8){
+UPGRADEFAIL.classList.remove('slideanim');UPGRADEFAIL.classList.add ('slide');UPGRADEFAIL.style.display="block";UPGRADEFAIL.style.opacity="1";UPGRADEFAIL.style.backgroundColor="red";}
 }
 
 
@@ -324,8 +332,16 @@ getItem(bossDrops[currentMonster.drops][0],bossDrops[currentMonster.drops][1]);
 getItem(bossDrops[currentMonster.drops][2],bossDrops[currentMonster.drops][3]);
 };
 
+function dpsCalc(){
+  if (currentWeapon!==0){dps=singleClickV+augmentV+currentWeapon.refine*5;}
+  else {
+    dps=singleClickV+augmentV;
+  }
+}
+
 function removeHP(){
-HP.innerHTML=HP.innerHTML-singleClickV-augmentV;
+dpsCalc();
+HP.innerHTML=HP.innerHTML-dps;
 //width per HP unit
 var widthHp =HPGUAGEWIDTH/currentMonster.hp;
 HPGUAGE.style.width = HP.innerHTML*widthHp;
@@ -423,12 +439,37 @@ for (i = 0; i < close.length; i++) {
   }
 }
 
+function Quest(copy1,objective,copy2,counter,type, completed) {
+    this.copy1 = copy1;
+    this.objective = objective1;
+    this.copy2 = copy2;
+    this.counter = counter;
+    this.type = type;
+    this.completed = completed;
+}
+
+var killHuman10 = new Quest("Kill 10x Humans",10,"Humans Killed:",0,"hunting",false);
+var currentQuest = 0;
+var nextQuest = 0;
+
+function questLoader(){
+QUEST.innerHTML="<p>"+currentQuest.copy1+"</p><p><span>"+currentQuest.copy2+" </span><"+currentQuest.counter+"</span></p>"
+/*writes to+updates quest pannel*/
+}
+
+function questRunner(index){
+let index = nextQuest;
+if (currentQuest[nextQuest]){}
+
+}
+
+function questChecker{
+// validate completion of quest
+//must add 1 to nextQuest
+}
+
+
+
 
 //useful code
  //onclick="this.parentElement.style.display='none';"
-
-
-//works!!!!
-// for (i = 0; i < itemList.length; i++) {
-// if(itemList[i].type == "loot" ){console.log(itemList[i])}
-// }
