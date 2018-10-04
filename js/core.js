@@ -439,37 +439,37 @@ for (i = 0; i < close.length; i++) {
   }
 }
 
-function Quest(copy1,objective,copy2,counter,type, completed) {
-    this.copy1 = copy1;
-    this.objective = objective1;
-    this.copy2 = copy2;
-    this.counter = counter;
-    this.type = type;
-    this.completed = completed;
-}
-
-var killHuman10 = new Quest("Kill 10x Humans",10,"Humans Killed:",0,"hunting",false);
-var currentQuest = 0;
-var nextQuest = 0;
-
-function questLoader(){
-QUEST.innerHTML="<p>"+currentQuest.copy1+"</p><p><span>"+currentQuest.copy2+" </span><"+currentQuest.counter+"</span></p>"
-/*writes to+updates quest pannel*/
-}
-
-function questRunner(index){
-let index = nextQuest;
-if (currentQuest[nextQuest]){}
-
-}
-
-function questChecker{
-// validate completion of quest
-//must add 1 to nextQuest
-}
-
-
-
-
-//useful code
- //onclick="this.parentElement.style.display='none';"
+// function Quest(copy1,objective,copy2,counter,type, completed) {
+//     this.copy1 = copy1;
+//     this.objective = objective1;
+//     this.copy2 = copy2;
+//     this.counter = counter;
+//     this.type = type;
+//     this.completed = completed;
+// }
+// 
+// var killHuman10 = new Quest("Kill 10x Humans",10,"Humans Killed:",0,"hunting",false);
+// var currentQuest = 0;
+// var nextQuest = 0;
+// 
+// function questLoader(){
+// QUEST.innerHTML="<p>"+currentQuest.copy1+"</p><p><span>"+currentQuest.copy2+" </span><"+currentQuest.counter+"</span></p>"
+// /*writes to+updates quest pannel*/
+// }
+// 
+// function questRunner(index){
+// let index = nextQuest;
+// if (currentQuest[nextQuest]){}
+// 
+// }
+// 
+// function questChecker{
+// // validate completion of quest
+// //must add 1 to nextQuest
+// }
+// 
+// 
+// 
+// 
+// //useful code
+//  //onclick="this.parentElement.style.display='none';"
