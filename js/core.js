@@ -1,416 +1,469 @@
-//Variables and arrays
-GOLD = document.getElementById("gold");
-HP = document.getElementById("hp");
-BUTTON = document.getElementsByClassName("button");
-MONNAME = document.getElementById("monName");
-MONIMG = document.getElementById("monimg");
-INVENTORY = document.getElementById("item-list");
-CRAFTING = document.getElementById("craft-list");
-UPGRADE = document.getElementById("upgrade-list");
-UPGRADEFAIL = document.getElementById("upgrade-fail");
-ALERTSUCCESS = document.getElementById("alert-success");
-ALERTEQUIP = document.getElementById("equip");
-ALERTFAIL = document.getElementById("alert-fail");
-ALERTINSF1 = document.getElementById("alert-insufficient-item1");
-ALERTINSF2 = document.getElementById("alert-insufficient-item2");
-EQUIPMENT = document.getElementById("equipment-list");
-TIMER = document.getElementById("timer");
-TIMERCONTAINER = document.getElementById("timer-container");
-BOSSKILL = document.getElementById("alert-boss-kill");
-STATS  = document.getElementById("stats-list");
-HPGUAGE = document.getElementById("hp-guage");
-HPGUAGEBAR = document.getElementById("guage-bar");
-HPGUAGEWIDTH = HPGUAGEBAR.offsetWidth;
-QUEST = document.getElementById("quest-pannel");
-
-var currentGold = 0;
-var monHP = 0;
-var currentMonster = 0;
-var singleClickV = 10;
-var augmentV = 0;
-var bossTimeLimit = 10;
-TIMER.innerHTML=bossTimeLimit;
-
-function Monster(id, name, hp, gold, killcount, drops, imgpath, monTier, monType, monClass){
-    this.id = id;
-    this.name = name;
-    this.hp = hp;
-    this.gold = gold;
-    this.killcount = killcount;
-    this.drops = drops;
-    this.imgpath = imgpath;
-    this.monTier = monTier;
-    this.monType = monType;
-    this.monClass= monClass;
+//constructors
+ function Job(id,name,attackv,imgpath,equipt,skills,jobdesc,empcost) {
+  this.id = id;  this.name = name;  this.attackv = attackv;  this.imgpath = imgpath;  this.equipt = equipt;  this.skills = skills;  this.jobdesc = jobdesc;  this.empcost = empcost;
 }
-var monsters = [
-ogre = new Monster(1,"Mike Miller",100,50,0,1,"ogre",0,"Ogre","Mob"),
-goblin = new Monster(2,"Charfeeleon",80,40,0,2,"goblin",0,"Goblin","Mob"),
-troll = new Monster(3,"Jinxy",60,30,0,3,"troll",0,"Troll","Mob"),
-busoye = new Monster(4,"Busoye - The holy",30,15,0,3,"busoye",0,"Human","Mob"),
-kk = new Monster(5,"Karkeui - The mother of deer",20,10,0,0,"kk",0,"Human","Mob"),
-//boses
-kaydel = new Monster(6,"Kaydel - The Ultimate Dreidel",2000,1000,0,5,"kaydel",0,"Human","Boss"),
-//weisun = new Monster(7,"Weisun - The All-BABA",500,250,0,4,"weisun",0,"Human","Boss"),
-kk = new Monster(8,"Karkeui - The Mother of Deer",800,400,0,1,"kkmother",0,"Human","Boss"),
-richie = new Monster(9,"Richie - The Groove Master",1000,500,0,2,"richie",0,"Human","Boss"),
-bu = new Monster(10,"DisaBu - Not Best Pleased",1400,700,0,4,"disabuu",0,"Human","Boss")
+function Card(id,name,hp,attack,bounty,imgpath,race,color) {
+  this.id = id;  this.name = name;  this.hp = hp;  this.attack = attack;  this.bounty = bounty;  this.imgpath = imgpath;  this.race = race;  this.color= color;
+}
+function Equiptment(id,name,hpBoon,attackBoon,cost,imgpath,job,color,slot) {
+  this.id = id;  this.name = name;  this.hpBoon = hpBoon;  this.attackBoon = attackBoon;  this.cost = cost;  this.imgpath = imgpath;  this.job = job;  this.color= color;  this.slot =slot;
+}
+function Consumable(id,name,hpBoon,attackBoon,cost,imgpath,job,color){
+  this.id = id;  this.name = name;  this.hpBoon = hpBoon;  this.attackBoon = attackBoon;  this.cost = cost;  this.imgpath = imgpath;  this.job = job;  this.color= color;
+}
+function Skill(id,name,hpBoon,attackBoon,imgpath, desc){
+  this.id = id;  this.name = name;  this.hpBoon = hpBoon;  this.attackBoon = attackBoon; this.imgpath = imgpath; this.desc= desc;
+//add skill type and bonus effect to it, then resolve them  later
+}
+
+//Variables
+equips =[
+  appleOArcher = new Equiptment(0,"Apple-O-Archer",0,20,500,"apple-o-archer","all","neutral","headgear"),
+  sword = new Equiptment(1,"Sword",0,20,500,"sword","all","neutral","weapon"),
 ]
 
-function Item(id, name, cost, sellvalue ,quantity, refine, clickAugment, type, imgpath) {
-    this.id = id;
-    this.name = name;
-    this.cost = cost;
-    this.sellvalue = sellvalue;
-    this.quantity = quantity;
-    this.refine = refine;
-    this.clickAugment = clickAugment;
-    this.type = type;
-    this.imgpath = imgpath;
-}
+playerEquips = [];
 
-var items = [
-wood = new Item(0,"Wood",10,5,0,0,0,"Loot","wood"),
-coal = new Item(1,"Coal",10,5,0,0,0,"Loot","coal"),
-bronze = new Item(2,"Bronze",20,10,0,0,0,"Loot","bronze"),
-steel = new Item(3,"Steel",200,100,0,0,0,"Loot","steel"),
-diamond = new Item(4,"Diamond",2000,1000,0,0,0,"Loot","diamond"),
-woodenSword = new Item(5,"Wooden Sword",100,50,0,0,10,"Weapon","wooden_sword"),
-bronzeSword = new Item(6,"Bronze Sword",100,50,0,0,20,"Weapon","bronze_sword"),
-ironSword = new Item(7,"Iron Sword",100,50,0,0,30,"Weapon","iron_sword"),
-steelSword = new Item(8,"Steel Sword",100,50,0,0,40,"Weapon","steel_sword"),
-diamondSword = new Item(9,"Diamond Sword",100,50,0,0,50,"Weapon","kk")
+skills=[
+bash= new Skill(0,"Bash",0,2,"bash","Deals 1.5x damage to next enemy"),
+swordMastery= new Skill(1,"Sword Mastery",0,2,"swordmastery","Passively increases damage by 2 when a sword is equipt")
+]
+
+jobs = [
+  novice = new Job (0,"Novice",1,"novicem",[],[skills[0],skills[1]],"The most basic job",0),
+  swordsman = new Job (1,"Swordsman",5,"swordm",[],[skills[0]],"The most basic job",5),
+  magician = new Job (2,"Magician",2,"magicm",[],[skills[0],skills[1]],"The most basic job",5),
+  archer = new Job (3,"Archer",4,"archm",[],[skills[1]],"The most basic job",5),
+  acolyte = new Job (4,"Acolyte",3,"acom",[],[skills[0],skills[1]],"The most basic job",5),
+  merchant = new Job (5,"Merchant",2,"merchm",[],[skills[0]],"The most basic job",5),
+  theif = new Job (6,"Theif",2,"theifm",[],[skills[1]],"A street-rat theif",5),
+  knight = new Job (7,"Knight",7,"knightm",[],[skills[0],skills[1]],"A Knight",10),
+  crusader = new Job (8,"Crusader",6,"crusaderm",[],[skills[0]],"A Crusader",10)
 ];
 
-var bossDrops = [
-  wood5steel5 = [0,5,3,5],
-  wood10steel5 = [0,10,3,5],
-  bronze5steel5 = [2,5,3,5],
-  bronze10steel5 = [2,10,3,5],
-  bronze5wood5 = [2,5,0,5],
-  bronze10wood5 = [2,10,0,5]
-]
-var currentWeapon = 0;
-//For stats tracking
-var killedMons = 0;
-var upgrd1 = 0;
-var upgrd2 = 0;
-var upgrd3 = 0;
-var dps = dpsCalc();
-//
-
-var itemList = [];
-var dropChance = 10;
-var baseRate = 20;
-
-var currentTier = 0;
-var timerRun = false;
-var timeElapsed = (TIMER.innerHTML);
-
-var timeLimit = setInterval(function(){
-if (timerRun == true){setTimeout(function(){TIMER.classList.add ('fader')},50);setTimeout(function(){TIMER.classList.remove ('fader')},1000 );TIMER.innerHTML=TIMER.innerHTML-1;}
-if (TIMER.innerHTML==0){alertTrigger(7);var bossKillAlert = document.getElementById("boss-text");bossKillAlert.innerHTML="You failed to kill the boss-man, man.";monsterLoader();timerRun = false;TIMER.innerHTML=bossTimeLimit;TIMERCONTAINER.style.display="none"}
-},1000);
-
-//set to ondoc load later
-monsterLoader();
-
-function monsterLoader(){
-HPGUAGE.style.width = HPGUAGEWIDTH;
-MONIMG.classList.remove('fader')
-MONIMG.classList.add ('faderanim')
-let filtered = monsters.filter(function(el) {return el.monClass === "Mob";});
-currentMonster = filtered[Math.floor(Math.random() * filtered.length)];
-HP.innerHTML = currentMonster.hp;
-MONNAME.innerHTML = currentMonster.name;
-MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".png");
-setTimeout(function(){MONIMG.classList.add ('fader')},50)
-}
-
-function bossLoader(){
-TIMERCONTAINER.style.display="inline-block";
-HPGUAGE.style.width = HPGUAGEWIDTH;
-let filtered = monsters.filter(function(el) {return el.monClass == "Boss";});
-currentMonster = filtered[Math.floor(Math.random() * filtered.length)];
-MONIMG.classList.remove('fader')
-MONIMG.classList.add ('faderanim')
-HP.innerHTML = currentMonster.hp;
-MONNAME.innerHTML = currentMonster.name;
-MONIMG.setAttribute("src","Images/" + currentMonster.imgpath + ".gif");
-  setTimeout(function(){MONIMG.classList.add ('fader')},50);
-  timerRun = true;
-}
-//}}
-
-function statsLoader(){
-dpsCalc();
-STATS.innerHTML="<table><tr><td>DPS:</td><td>"+dps+"</td></tr>"+"<tr><td>Total Monsters Killed: </td><td>"+killedMons+"</td></tr>"
-}
-
-
-function inventoryLoader(){
-if (itemList.length === 0){CRAFTING.innerHTML="You've got nothing left!<br><img src='Images/ianbeale.gif'"}
-else {
-let text =  "<table><tr>";
-for (i = 0; i < itemList.length; i++) {
-if(itemList[i].type == "Loot"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"<br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";
-}
-INVENTORY.innerHTML= text;
-}
-}
-}
-
-function equipmentLoader(){
-let text =  "<table><tr>";
-//for (i = 0; i < itemList.length; i++) {
-//if(itemList[i].type == "weapon"){text += "<td>" + "<img src = 'Images/" + itemList[i].imgpath + ".png'" +"onclick='equipWeapon("+itemList[i].id+")'><br><br>" + itemList[i].name + ":" + itemList[i].quantity +"</td>";EQUIPMENT.innerHTML= text;}
-let filtered = itemList.filter(function(el) {return el.type == "Weapon";});
-if (filtered.length >0){
-for (i = 0; i < filtered.length; i++) {
-text += "<td onclick='this.children[1].classList.add(\"equipt-item\"),this.children[1].classList.remove(\"equipt-hidden\")' style='position:relative'>" + "<img src = 'Images/" + filtered[i].imgpath + ".png'" +"onclick='equipWeapon("+filtered[i].id+")'><span class='equipt-hidden'>E</span><br><br>" + filtered[i].name + ":" + filtered[i].quantity +"</td>";
-}
-}else{text = "<p>You've got no equipment left!<br><img src='Images/ianbeale.gif'></p>";}
-EQUIPMENT.innerHTML= text;
-}
-
-// let target = filtered[i].innerHTML= document.getElementsByClassName('equipt-hidden')
-// this.children[0].classList.add('equip-item').classList.remove('equip-hidden')
-// onclick=
-
-function upgradeLoader(){
-if(currentWeapon===0){UPGRADE.innerHTML="<p>You've got nothing to upgrade!<br><img src='Images/ianbeale.gif'></p>";}
-else{
-let text =  "<p>Upgrade your "+ currentWeapon.name +" here</p><table><tr><td style='position:relative'><img src = 'Images/" + currentWeapon.imgpath + ".png'><span class='equipt-show'>+"+currentWeapon.refine+"</span>"  + "<br><button class='button' onclick='upgradeWeapon()'>Upgrade</button></div>";
-UPGRADE.innerHTML= text;
-}
-}
-
-function upgradeWeapon(){
-let upgradeFailText = document.getElementById("upgrade-fail-text");
-if (currentWeapon === 0){console.log("You have no weapon")}
-else {if(currentWeapon.refine <=4){bonusRate=100}
-  if(currentWeapon.refine >=5 && currentWeapon.refine<=6){bonusRate=40}
-  if(currentWeapon.refine >=7 && currentWeapon.refine<=8){bonusRate=20}
-  if(currentWeapon.refine ==9){bonusRate=-30};
-let chance = Math.floor(Math.random() * 100) + bonusRate + baseRate;console.log(currentWeapon.refine);console.log(chance);
-if(chance <=80){upgradeFailText.innerHTML="Your +"+currentWeapon.refine+" "+currentWeapon.name+" has broken!";alertTrigger(8);currentWeapon.refine = 0;removeItem(items.indexOf(currentWeapon),1);currentWeapon=0;upgradeLoader();}
-else{currentWeapon.refine++;upgradeLoader();}
-}
-}
-
-function equipWeapon(id){
-var equipText = document.getElementById("equip-text");
-if (id === currentWeapon.id){console.log("you already have this weapon equipt")}
-  else{currentWeapon = items[id]
-augmentV = currentWeapon.clickAugment;
-alertTrigger(5);
-equipText.innerHTML= "You have equipped a " + currentWeapon.name + ".";
-console.log("The weapons bonus is "+currentWeapon.clickAugment+" damage. The current clickLv is " + singleClickV + " plus " + augmentV);
-}
-}
-
-function recipeLoader(){
-let display = recipes.length;
-let text =  "<table><tr><th>Item:</th><th>Needed:</th><th>Quantity:</th></tr>"
-for (i = 0; i < display; i++) {text +="<tr><td>" + recipes[i].name + ":</td><td>" + items[recipes[i].required[0]].name +"<br>" + items[recipes[i].required[2]].name + "</td><td>" + recipes[i].required[1] +"<br>" +recipes[i].required[3] +"</td><td><button class='button' onclick='craftItem(" + recipes[i].id +")'>Craft</button></td></tr>";}
-text += "</table>";
-CRAFTING.innerHTML= text;
-}
-
-function Recipe (id, name, required, craftedItemId){
-  this.id = id;
-  this.name = name;
-  this.required = required;
-  this.craftedItemId = craftedItemId;
-}
-
-var recipes = [
-woodenSwordRecipe = new Recipe (0,"Wooden Sword",[0,10,3,5],5),
-bronzeSwordRecipe = new Recipe (1,"Bronze Sword",[2,10,0,5],6)
+base = 1;
+hand = [];
+playerHand = document.getElementById("hand");
+cards = [
+picky = new Card(0,"Picky",5,2,700,"picky","Brute","blue"),
+poring = new Card(1,"Poring",3,1,400,"poring","Demi-Human","red")
 ]
 
-function craftItem(id){
-var successText = document.getElementById("success-text");
-var failText = document.getElementById("fail-text");
-var insf1Text = document.getElementById("insf1-text");
-var insf2Text = document.getElementById("insf2-text");
-  var itemtoMake =recipes[id];
-  var component1 = itemtoMake.required[0];
-  var component2 = itemtoMake.required[2];
-  var qty1 = itemtoMake.required[1];
-  var qty2 = itemtoMake.required[3];
-  console.log(itemtoMake.name + ":")
-  console.log(items[component1].name + " : " + qty1)
-  console.log(items[component2].name + " : " + qty2);
-  if (itemList.includes(items[component1])=== false && itemList.includes(items[component2])=== false){
-    failText.innerHTML="You do not posses any of the items needed";alertTrigger(1);
+playerConsmables = [];
+
+consumables = [
+emperium = new Consumable(0,"Emperium",0,0,1000,"emperium","all","neutral"),
+redPot= new Consumable(1,"Red Potion",5,0,100,"redpot","all","neutral"),
+orangePot= new Consumable(2,"Orange Potion",10,0,200,"orangepot","all","neutral"),
+yellowPot= new Consumable(3,"Yellow Potion",15,0,300,"yellowpot","all","neutral")
+]
+
+purchasableItems = [];
+
+MODALIMG = document.getElementById("modal-img");
+MODALCONTENT = document.getElementById("modal-content");
+BATTLEBOXPLAYER = document.getElementById("battle-box-player")
+BATTLEBOXENEMY = document.getElementById("battle-box-enemy")
+battleBox = document.getElementById("battle-box");
+playerSpriteCont = document.getElementById("player-sprite-container");
+playerSprite= document.getElementById("player-sprite");
+handIndex = 0;
+zenyDisplay = document.getElementsByClassName("zeny")
+
+availableCells = [];
+sCells = document.getElementsByClassName("summon-cell")
+pCells = [sCells[0],sCells[1],sCells[2],sCells[3],sCells[4],sCells[5],sCells[6],sCells[7]];
+eCells = [sCells[8],sCells[9],sCells[10],sCells[11],sCells[12],sCells[13],sCells[14],sCells[15]];
+
+playerDeck= [];
+enemyDeck = [];
+inPlayPlayer = ["","","",""];
+inPlayPlayerIndex = 0;
+inPlayEnemy = [];
+activeDeck = playerDeck;
+turn = "player";
+player = jobs[0];
+playerHealth = 20;
+enemy = inPlayPlayer[0];
+enemyHealth = 20;
+mobHealth =0;
+timerRunning = false;
+enemyPlayer = jobs[0];
+playerZeny = 3000;
+enemyZeny = 0;
+playerEmps = 5;
+enemyEmps = 0;
+availableClasses = [];
+availableClassesIndex = 0;
+
+//main code begins
+function assembleDeck(){
+  playerDeck.push(cards[0],cards[1])
+}
+
+function cardRender(card){
+image = document.createElement("IMG");
+source = document.createAttribute("src")
+source.value = "images/"+ card.imgpath+".jpg";
+image.setAttributeNode(source)
+target = document.createElement("DIV");
+containerId = document.createAttribute("id")
+containerId.value = "cardcontainers"+handIndex;
+target.setAttribute("class", "cardcontainers");
+target.setAttributeNode(containerId);
+target.appendChild(image)
+target.addEventListener('click',selectCard,false)
+image.addEventListener('wheel', zoomIn,false)
+
+handIndex++
+}
+
+function cardDraw() {
+drawnCard =  activeDeck[Math.floor(Math.random() *activeDeck.length)]
+console.log(drawnCard)
+cardRender(drawnCard)
+playerHand.appendChild(target);
+hand.push(drawnCard)
+}
+
+assembleDeck();
+
+function selectCard(e){
+selectedCard = e.target;
+selectedCard.style.border="1px solid blue";
+console.log(selectedCard);
+availableCellsChecker()
+console.log(selectedCard.parentElement)
+}
+
+function placeCard(e){
+p = e.target;
+console.log(p);
+if (turn == "player")  {
+for (var i = 0; i < pCells.length; i++) {
+pCells[i].removeEventListener('click',placeCard,false);
+pCells[i].style.border="1px solid black";
+}
   }
-if (itemList.includes(items[component1])=== true && itemList[itemList.indexOf(items[component1])].quantity < qty1)
-  {insf1Text.innerHTML="You do not posses enough " + items[component1].name + ".",alertTrigger(2);
-console.log("You do not posses enough " + items[component1].name + ".")}
-if (itemList.includes(items[component2])=== true && itemList[itemList.indexOf(items[component2])].quantity < qty2)
-  {insf2Text.innerHTML="You do not posses enough " + items[component2].name + ".";alertTrigger(3);
-console.log("You do not posses enough " + items[component2].name + ".")}
-else if (itemList.includes(items[component1])=== true && itemList[itemList.indexOf(items[component1])].quantity >= qty1 && itemList.includes(items[component1])=== true && itemList[itemList.indexOf(items[component2])].quantity >= qty2){
-    getItem(itemtoMake.craftedItemId,1);
-    removeItem(component1,qty1);
-    removeItem(component2,qty2);
-    alertTrigger(0);
-successText.innerHTML="You have successfully crated a " + itemtoMake.name + ".";}
 
-};
-
-function alertTrigger(status){
-if (status == 0){
-ALERTSUCCESS.style.backgroundColor="green";ALERTSUCCESS.classList.remove('slideanim');ALERTSUCCESS.classList.add ('slide');ALERTSUCCESS.style.display="block";ALERTSUCCESS.style.opacity="1";}
-if (status == 1){
-ALERTFAIL.classList.remove('slideanim');ALERTFAIL.classList.add ('slide');ALERTFAIL.style.display="block";ALERTFAIL.style.opacity="1";ALERTFAIL.style.backgroundColor="red";}
-if (status == 2){
-ALERTINSF1.classList.remove('slideanim');ALERTINSF1.classList.add ('slide');ALERTINSF1.style.display="block";ALERTINSF1.style.opacity="1";ALERTINSF1.style.backgroundColor="red";}
-if (status == 3){
-ALERTINSF2.classList.remove('slideanim');ALERTINSF2.classList.add ('slide');ALERTINSF2.style.display="block";ALERTINSF2.style.opacity="1";ALERTINSF2.style.backgroundColor="red";}
-if (status == 4){
-ALERTLOOT.style.backgroundColor="green";ALERTLOOT.classList.remove('slideanim');ALERTLOOT.classList.add ('slide');ALERTLOOT.style.display="block";ALERTLOOT.style.opacity="1";}
-if (status == 5){
-ALERTEQUIP.style.backgroundColor="green";ALERTEQUIP.classList.remove('slideanim');ALERTEQUIP.classList.add ('slide');ALERTEQUIP.style.display="block";ALERTEQUIP.style.opacity="1";}
-if (status == 6){
-BOSSKILL.style.backgroundColor="green";BOSSKILL.classList.remove('slideanim');BOSSKILL.classList.add ('slide');BOSSKILL.style.display="block";BOSSKILL.style.opacity="1";}
-if (status == 7){
-BOSSKILL.style.backgroundColor="red";BOSSKILL.classList.remove('slideanim');BOSSKILL.classList.add ('slide');BOSSKILL.style.display="block";BOSSKILL.style.opacity="1";}
-if (status == 8){
-UPGRADEFAIL.classList.remove('slideanim');UPGRADEFAIL.classList.add ('slide');UPGRADEFAIL.style.display="block";UPGRADEFAIL.style.opacity="1";UPGRADEFAIL.style.backgroundColor="red";}
-}
-
-
-
-function getItem(id,times){
-if (itemList.includes(items[id])){
-    items[id].quantity +=times;
-  console.log("you already posses this item")} else
-    {itemList.push(items[id])
-    items[id].quantity +=times;}
-  console.log("you gained " + items[id].name)
-  console.log(itemList)
-};
-
-function removeItem(id,qty){
-//if (itemList.includes(items[id])){
-itemList[itemList.indexOf(items[id])].quantity -=qty;
-console.log("you lose " + qty +" "+ items[id].name+"(s)");
-console.log(itemList);
-if (itemList[itemList.indexOf(items[id])].quantity <=0)
-{itemList.splice(itemList.indexOf(items[id]), 1);
-console.log(itemList)}
-}
-
-function killCheck(){
-  if (HP.innerHTML <= 0){
-    HP.innerHTML = 0;
-    HPGUAGE.style.width = 0;
-    var toggle = false;
-    do {
-        MONIMG.setAttribute("onClick",null);
-        setTimeout(function(){toggle==true;},500)
+if (turn == "enemy")  {
+for (var i = 0; i < eCells.length; i++) {
+eCells[i].removeEventListener('click',placeCard,false);
+eCells[i].style.border="none";}
     }
-    while (toggle=false)
-    currentMonster.killcount++;
-    currentGold = currentGold + currentMonster.gold;
-    GOLD.innerHTML = currentGold;
-    activeCheck();
-console.log(currentMonster.name + " has been killed " + currentMonster.killcount + " time(s).");
-killedMons++;
-getLoot();
-if (timerRun == true){timerRun =false;alertTrigger(6);TIMERCONTAINER.style.display="none";bossDrop();
-var bossKillAlert = document.getElementById("boss-text");bossKillAlert.innerHTML="<h2>"+currentMonster.name+" has been defeated!</h2><p> You have obtained:</p><h3>"+currentMonster.gold+" gold</h3><p><img src='Images/"+items[bossDrops[currentMonster.drops][0]].imgpath+".png'</img></p><h3>"+bossDrops[currentMonster.drops][1]+"x "+items[bossDrops[currentMonster.drops][0]].name+"</h3><img src='Images/"+items[bossDrops[currentMonster.drops][2]].imgpath+".png'</img></p><h3>"+bossDrops[currentMonster.drops][3]+"x "+items[bossDrops[currentMonster.drops][2]].name+"</h3><p>This feat was acheived in "+ (bossTimeLimit-TIMER.innerHTML) +" seconds.</p><h2> Waow!</h2>";
-;TIMER.innerHTML=bossTimeLimit}
-setTimeout(function(){monsterLoader();MONIMG.setAttribute("onClick","removeHP(),killCheck()");HPGUAGE.style.width = HPGUAGEWIDTH;},500);
-}
+selectedCard.style.border="none";
+playerHand.removeChild(selectedCard.parentElement)
+p.appendChild(selectedCard)
+getCardObj(selectedCard)
+inPlayPlayer[p.id-1] = hand[handPos]
+hand.splice(handPos,1)
+console.log(hand)
 }
 
-function bossDrop(){
-getItem(bossDrops[currentMonster.drops][0],bossDrops[currentMonster.drops][1]);
-getItem(bossDrops[currentMonster.drops][2],bossDrops[currentMonster.drops][3]);
-};
-
-function dpsCalc(){
-  if (currentWeapon!==0){dps=singleClickV+augmentV+currentWeapon.refine*5;}
-  else {
-    dps=singleClickV+augmentV;
+function availableCellsChecker(){
+  if (turn == "player")  {
+  for (var i = 0; i < pCells.length; i++) {
+    if(pCells[i].hasChildNodes() == false){
+      pCells[i].addEventListener('click',placeCard,false);
+      pCells[i].style.border="1px solid blue";
+      }
+    }
+  }
+  if (turn == "enemy"){
+  for (var i = 0; i < eCells.length; i++) {
+    if(eCells[i].hasChildNodes() == false){
+      eCells[i].addEventListener('click',placeCard,false)
+      }
+    }
   }
 }
 
-function removeHP(){
-dpsCalc();
-HP.innerHTML=HP.innerHTML-dps;
-//width per HP unit
-var widthHp =HPGUAGEWIDTH/currentMonster.hp;
-HPGUAGE.style.width = HP.innerHTML*widthHp;
+//multi-purpose array obj property search
+function findWithAttr(array, attr, value) {
+    for(var i = 0; i < array.length; i += 1) {
+        if(array[i].attr == value) {
+            console.log[i];
+        }
+    }
+    return -1;
 }
 
-//bugged for now due to interaction with bosses
-function autoclickeractivate(){
-setInterval(function(){
-  if (HP.innerHTML > 0){removeHP();killCheck();};
-},750)
-
-};
-
-function upgrade(level){
-var level= level;
-currentGold = currentGold - (level *10);
-GOLD.innerHTML = currentGold;
-singleClickV = singleClickV + (level*5);
+function getCardObj(target){
+let src = target.getAttribute("src")
+src = src.slice(7,(src.length-4))
+console.log(src)
+var i;
+for (var i = 0; i < hand.length; i++) {
+  if(hand[i].imgpath == src){handPos = i;}
 }
-
-function activeCheck(){
-if(currentGold>= 50 && upgrd1 == 0){
-  BUTTON[0].disabled=false;}
-  else{BUTTON[0].disabled=true}
-if(currentGold>= 100 && upgrd2 == 0){
-  BUTTON[1].disabled=false;}
-  else{BUTTON[1].disabled=true}
-if(currentGold>= 200 && upgrd3 == 0){
-  BUTTON[2].disabled=false;}
-  else{BUTTON[2].disabled=true}
 }
-activeCheck();
-function disable(level){
-var level = level;
-BUTTON.item(level).disabled = true;
-}
+//  SCROLL WHEEL EVENT LISTENER
+function zoomIn(e) {
+if (e.deltaY < 0) {
+  console.log(e)
+  console.log(e.target)
+document.getElementById('modal').style.display='block';
+MODALIMG.src = e.target.src;
+modalContent.style.animationName = "zoom";
+}};
 
-function clickCount(value){
-var clicks = value;
-if (clicks === 1){upgrd1++;}
-else if (clicks === 2){upgrd2++;}
-else if (clicks === 3){upgrd3++;}
-console.log(upgrd1,upgrd2,upgrd3);
-}
-
-function getLoot(index){
-let lootText = document.getElementById("loot-text");
-index = currentMonster.drops;
-if (Math.floor(Math.random() * dropChance) >= 3){
-  if (itemList.includes(items[index])){
-    items[index].quantity++;
-  console.log("you already posses this item")} else
-    {itemList.push(items[index])
-    items[index].quantity++;}
-  console.log("you get item " + items[index].name)
-  console.log(itemList)
-  }
-else {console.log("you don't get item")}
-inventoryLoader();
-};
-
-
+var modalContent = document.getElementById('modal-content');
 var modal = document.getElementById('modal');
 window.onclick = function(event) {
 if (event.target == modal) {
 modal.style.display="none";
 }
 }
+window.onwheel = function(event) {
+if (event.deltaY > 0) {
 
+modalContent.style.animationName = "zoom-out";
+function hide(){
+modal.style.display="none";
+}
+setTimeout(hide,400);
+}
+}
+
+//battle related
+function mobBattle(unit){
+enemy = inPlayPlayer[inPlayPlayerIndex];
+BATTLEBOXPLAYER.src = player.imgpath+".gif";
+BATTLEBOXENEMY.src = "images/"+enemy.imgpath+".gif";
+battleBox.style.display = "block";
+
+ patk = document.getElementById("player-attack")
+ php = document.getElementById("player-health")
+ eatk = document.getElementById("enemy-attack")
+ ehp = document.getElementById("enemy-health")
+
+patk.innerText = player.attackv;
+php.innerText = playerHealth;
+eatk.innerText = enemy.attack;
+ehp.innerText = enemy.hp;
+mobHealth = ehp.innerText;
+let goldDropped = document.getElementsByClassName('grid-item')[2];
+goldDropped.innerText="Gold: "+enemy.bounty;
+}
+
+function playerBattle(){
+  enemy = enemyPlayer;
+  BATTLEBOXPLAYER.src = player.imgpath+".gif";
+  BATTLEBOXENEMY.src = enemy.imgpath+".gif";
+  battleBox.style.display = "block";
+  patk.innerText = player.attackv;
+  php.innerText = playerHealth;
+  eatk.innerText = enemy.attackv;
+  ehp.innerText = enemyHealth;
+  enemyHealth = ehp.innerText;
+}
+
+function pvpTrigger(){
+fightTimer = setInterval(pvp,1500);
+playerBattle();
+}
+
+function pvp(){
+timerRunning = true;
+
+if (playerHealth >0 && enemyHealth >0){
+  BATTLEBOXPLAYER.classList.add("attackanim");
+  BATTLEBOXENEMY.classList.add("attackanim");
+  php.innerText = removeHP(playerHealth,enemy.attackv);
+  playerHealth = php.innerText;
+  ehp.innerText = removeHP(enemyHealth,player.attackv);
+  enemyHealth = ehp.innerText;
+  playerDeadCheck();
+  console.log("1 loop ran");
+  setTimeout(function(){BATTLEBOXPLAYER.classList.remove("attackanim");BATTLEBOXENEMY.classList.remove("attackanim")},800);
+}
+if (enemyHealth <=0){timerRunning =false;clearInterval(fightTimer);
+console.log("timer stopped");
+setTimeout(function(){battleBox.style.animationName ="zoom-out";},1000);
+setTimeout(function(){battleBox.style.display="none";battleBox.style.animationName = "none"},1700);
+}
+}
+
+function fightTrigger(){
+fightTimer = setInterval(runFight,1500)
+mobBattle(enemy);}
+
+function runFight(){
+timerRunning = true;
+if (playerHealth >0 && mobHealth >0){
+  BATTLEBOXPLAYER.classList.add("attackanim");
+  BATTLEBOXENEMY.classList.add("attackanim");
+  let damagePlayer = document.getElementById("damagePlayer");
+  let damageEnemy = document.getElementById("damageEnemy");
+  damagePlayer.classList.add("damage-dealt"); damagePlayer.innerText = enemy.attack;
+  damageEnemy.classList.add("damage-dealt"); damageEnemy.innerText = player.attackv;
+  php.innerText = removeHP(playerHealth,enemy.attack);
+  playerHealth = Number(php.innerText);
+  ehp.innerText = removeHP(mobHealth,player.attackv);
+  mobHealth = ehp.innerText;
+  playerDeadCheck();
+  console.log("1 loop ran");
+  setTimeout(function(){BATTLEBOXPLAYER.classList.remove("attackanim");BATTLEBOXENEMY.classList.remove("attackanim");damagePlayer.classList.remove("damage-dealt");damageEnemy.classList.remove("damage-dealt");},800);
+}
+if (mobHealth <=0){timerRunning =false;clearInterval(fightTimer);
+console.log("timer stopped");acquireZeny();inPlayPlayerIndex++;
+setTimeout(function(){battleBox.style.animationName ="zoom-out";},1000);
+setTimeout(function(){battleBox.style.display="none";battleBox.style.animationName = "none"},1700);
+setTimeout(function(){moveUnit()},1700);
+setTimeout(function(){cardChecker()},2700);
+}
+}
+
+function turnRunner(){
+  if (inPlayPlayerIndex < 4){
+    mobBattle(enemy);fightTrigger();
+  }else{shopTrigger();console.log("elapsed")}
+}
+
+function cardChecker(){
+if (inPlayPlayerIndex > 3){
+  shopTrigger();afterTurnCleanse("player");
+}
+
+else if (inPlayPlayer[inPlayPlayerIndex].constructor.name=="Consumable")
+{
+  cardActivate(inPlayPlayer[inPlayPlayerIndex])
+  consumeItem();
+  inPlayPlayerIndex++;
+  setTimeout(function(){moveUnit()},1700);
+  setTimeout(function(){cardChecker()},2700);
+}
+
+else if(inPlayPlayer[inPlayPlayerIndex].constructor.name=="Card")
+ {turnRunner();
+  console.log("monster");
+}
+else{
+  console.log("empty cell");inPlayPlayerIndex++;
+  setTimeout(function(){moveUnit()},1000);
+  setTimeout(function(){cardChecker()},2000)
+}
+}
+
+function consumeItem(){
+  playerHealth = playerHealth + inPlayPlayer[inPlayPlayerIndex].hpBoon;
+  console.log(playerHealth);
+  player.attackv = player.attackv + inPlayPlayer[inPlayPlayerIndex].attackBoon;
+  console.log(player.attackv);
+}
+
+function afterTurnCleanse(whose){
+  if (whose == "player"){
+    inPlayPlayer = ["","","",""];
+} else {
+  inPlayEnemy = ["","","",""];}
+
+for (var i = 0; i < pCells.length; i++) {
+  if (pCells[i].hasChildNodes()){
+  pCells[i].removeChild(pCells[i].childNodes[0]);}
+}
+inPlayPlayerIndex=0;
+moveUnit();
+}
+
+function cardActivate(card){
+let modal = document.getElementById("activate-modal")
+  let target = document.getElementById('activate-modal-img');
+  let content = document.getElementById('activate-content');
+  target.setAttribute("src","images/"+card.imgpath+".jpg");
+  modal.style.display="block";
+if (inPlayPlayer[inPlayPlayerIndex].constructor.name=="Consumable")
+ {console.log("I run")
+   content.innerText= "You gained "+inPlayPlayer[inPlayPlayerIndex].hpBoon+"hp. You now have "+(playerHealth+inPlayPlayer[inPlayPlayerIndex].hpBoon)+"hp."}
+
+  setTimeout(function(){modal.style.animationName ="zoom-out";},1000);
+  setTimeout(function(){modal.style.display="none";modal.style.animationName = "none"},1700);
+}
+
+function removeHP(unit,ammount){
+unit = (unit - ammount);
+  return unit;
+}
+
+function playerDeadCheck(){
+  if(playerHealth <=0){timerRunning =false;alert("Game over yeahhhhh!!!")}
+}
+
+function acquireZeny(){
+  playerZeny += inPlayPlayer[inPlayPlayerIndex].bounty;
+  updateZeny();
+}
+
+function moveUnit(){
+  if(base < 4){
+playerSpriteCont.style.left = ""+(100*base)+"px";
+base++;
+}else{base = 0;playerSpriteCont.style.left ="0px"}
+}
+
+//shop related
+
+function shopTrigger(){
+//add phase Animation alert style slide-in
+document.getElementById('shop-menu-modal').style.display="block";updateZeny();
+}
+
+function shopPopulator(type){
+if (type == 'items'){
+  var items1 = document.getElementById('items1');
+  var items2 = document.getElementById('items2');
+  var items3 = document.getElementById('items3');
+  items1.children[0].children[1].innerHTML="Name: "+consumables[0].name+"<br>Cost: "+consumables[0].cost+"z"
+  items2.children[1].src= "images/"+consumables[1].imgpath+".gif";
+  items2.children[0].children[1].innerHTML="Name: "+consumables[1].name+"<br>Cost: "+consumables[1].cost+"z"
+  items3.children[1].src= "images/"+consumables[2].imgpath+".gif";
+  items3.children[0].children[1].innerHTML="Name: "+consumables[2].name+"<br>Cost: "+consumables[2].cost+"z"
+purchasableItems[0] = consumables[0];
+purchasableItems[1] = consumables[1];
+purchasableItems[2] = consumables[2];
+
+}
+if (type == "weapons"){
+  var weapons1 = document.getElementById('weapons1');
+  var weapons2 = document.getElementById('weapons2');
+  var weapons3 = document.getElementById('weapons3');
+
+}
+if (type == "armours"){
+  var armours1 = document.getElementById('armours1');
+  var armours2 = document.getElementById('armours2');
+  var armours3 = document.getElementById('armours3');
+}
+}
+
+function purchase(item){
+if (playerZeny >= purchasableItems[item].cost){
+    playerZeny -= purchasableItems[item].cost;
+      if (item != 0)
+        {cardRender(purchasableItems[item]);hand.push(purchasableItems[item]);cardRender(purchasableItems[item]);playerHand.appendChild(target);updateZeny();}
+        else {
+          playerEmps++;updateZeny();
+        }
+} else{alert("You have insufficient Zeny to purchase this item.");}
+}
+
+function updateZeny(){
+  for (var i = 0; i < zenyDisplay.length; i++) {
+    zenyDisplay[i].innerHTML = playerZeny+"z";
+  }
+}
+
+function availableClassesEvaluator(){
+  if (player.name=="Novice"){
+    console.log(player.name)
+    availableClasses.push(jobs[1],jobs[2],jobs[3],jobs[4],jobs[5],jobs[6])
+  }
+  if (player.name=="Swordsman"){
+    console.log(player.name)
+    availableClasses.push(jobs[7],jobs[8])
+  }
+
+}
 
 document.getElementsByClassName("tablink")[0].click();
 
@@ -421,11 +474,7 @@ function openTab(evt, tabName) {
     x[i].style.display = "none";
   }
   tablinks = document.getElementsByClassName("tablink");
-//  for (i = 0; i < x.length; i++) {
-  //  tablinks[i].classList.remove("w3-light-grey");
-  //}
-  document.getElementById(tabName).style.display = "block";
-  //evt.currentTarget.classList.add("w3-light-grey");
+  document.getElementById(tabName).style.display = "flow-root";
 }
 
 var close = document.getElementsByClassName("closebtn");
@@ -439,37 +488,86 @@ for (i = 0; i < close.length; i++) {
   }
 }
 
-// function Quest(copy1,objective,copy2,counter,type, completed) {
-//     this.copy1 = copy1;
-//     this.objective = objective1;
-//     this.copy2 = copy2;
-//     this.counter = counter;
-//     this.type = type;
-//     this.completed = completed;
-// }
-// 
-// var killHuman10 = new Quest("Kill 10x Humans",10,"Humans Killed:",0,"hunting",false);
-// var currentQuest = 0;
-// var nextQuest = 0;
-// 
-// function questLoader(){
-// QUEST.innerHTML="<p>"+currentQuest.copy1+"</p><p><span>"+currentQuest.copy2+" </span><"+currentQuest.counter+"</span></p>"
-// /*writes to+updates quest pannel*/
-// }
-// 
-// function questRunner(index){
-// let index = nextQuest;
-// if (currentQuest[nextQuest]){}
-// 
-// }
-// 
-// function questChecker{
-// // validate completion of quest
-// //must add 1 to nextQuest
-// }
-// 
-// 
-// 
-// 
-// //useful code
-//  //onclick="this.parentElement.style.display='none';"
+function classCarousel(direction){
+var a,b,c,d;
+a = document.getElementById("class1")
+b = document.getElementById("class2")
+c = document.getElementById("class3")
+d = document.getElementById("class-desc")
+e = document.getElementById("class-stats")
+f = document.getElementById("class-skills")
+
+if (direction == 'initial'){
+  a.src = "";
+  b.src = availableClasses[availableClassesIndex].imgpath+".gif";
+  c.src = availableClasses[availableClassesIndex+1].imgpath+".gif";
+}
+
+if (direction == "right" && availableClassesIndex < availableClasses.length-1){
+  availableClassesIndex++;
+}
+
+if (direction == "left" && availableClassesIndex>0){
+  availableClassesIndex--;
+}
+
+if (availableClassesIndex ==0) {
+a.src = "";
+b.src = availableClasses[availableClassesIndex].imgpath+".gif";
+}else {
+  a.src = availableClasses[availableClassesIndex-1].imgpath+".gif";
+}
+b.src = availableClasses[availableClassesIndex].imgpath+".gif";
+
+if (availableClassesIndex >=availableClasses.length-1){
+c.src = "";
+}else{c.src = availableClasses[availableClassesIndex+1].imgpath+".gif"}
+
+d.innerHTML = "<h2>"+availableClasses[availableClassesIndex].name+"</h2>"+"<p>"+availableClasses[availableClassesIndex].jobdesc;+"</p>";
+e.innerHTML = "<p>Attack: "+availableClasses[availableClassesIndex].attackv+"</p>";
+
+var i = 0;
+var skillText = "";
+for (var i = 0; i < availableClasses[availableClassesIndex].skills.length; i++) {
+  skillText+= '<div class="popup"><span class="popuptext" id="sk'+i+'pop"></span><img src="'+availableClasses[availableClassesIndex].skills[i].imgpath+'.gif" id="sk'+i+'"class="popup" onclick="skillPopup('+i+')"></div>'
+ }
+f.innerHTML = skillText;
+}
+
+function skillPopup(skillID) {
+    var idName = "sk"+skillID+"pop";
+    console.log(idName);
+    var popup = document.getElementById(idName);
+    console.log(skillID);
+    console.log(popup);
+    popup.classList.toggle("fader");
+    popup.innerHTML=skills[skillID].desc;
+}
+
+
+
+function classChangeModalLoader(){
+availableClasses = [];
+availableClassesIndex = 0;
+var i = document.getElementById("class-change-modal");
+i.style.display = "block";
+var t = document.getElementById("class-change-carousel");
+t.style.display="flex";
+availableClassesEvaluator();
+classCarousel('initial');
+}
+
+function classSelect(){
+  if (playerEmps >=5){
+    player = availableClasses[availableClassesIndex];
+    playerSprite.src = player.imgpath+".gif";
+    playerEmps = playerEmps-5;
+    availableClasses = [];
+  } else{document.getElementById('confirmation-modal').style.display="none";alert("You have insufficient Emps")}
+console.log(playerEmps)
+}
+
+function confirmationTrigger(){
+document.getElementById('confirmation-modal').style.display="block"
+document.getElementById('confirmation-modal-text').innerHTML="<p> Are you sure you wish to change to this class? This cannot be undone.</p>"
+}
