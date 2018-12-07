@@ -1,215 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
 <head>
   <link rel="icon" src="images/emperium.jpg">
   <title>Ragnarok TCG</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="Stylesheets/main.css" rel="stylesheet" type="text/css">
-  <link href="Stylesheets/modal.css" rel="stylesheet" type="text/css">
-
+  <link href="style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div class="modal" id="modal">
-<div id="modal-content">
-      <img id = "modal-img">
-        <div id="card-content-container">
-        <span onclick="document.getElementById('modal').style.display='none'" class="close">&times;</span>
-        <p id="card-content">Some text about the card.</p></div>
-</div>
-</div>
+<div id="container">
 
-<div id="activate-modal">
-<div id="activate-modal-content">
-  <span onclick="document.getElementById('activate-modal').style.display='none'" class="close">&times;</span>
-      <img id = "activate-modal-img">
-        <div id="activate-content-container">
-                <p id="activate-content">Some text about the card.</p></div>
-</div>
-</div>
-
-
-<div id="confirmation-modal">
-<div class="confirmation-modal-content">
-  <div class="confirmation-modal-header">
-  <span onclick="document.getElementById('confirmation-modal').style.display='none'" class="close">&times;</span>
-  </div>
-  <div id="confirmation-modal-text">
-<p>Hello this is text</p>
-  </div>
-  <div class ="confirmation-modal-footer">
-<button class="button" value="Cancel" onclick="document.getElementById('confirmation-modal').style.display='none'">Cancel</button>
-  <button class="button" value="Okay" onclick="classSelect();document.getElementById('confirmation-modal').style.display='none';document.getElementById('class-change-modal').style.display='none'">Okay</button>
-
-  </div>
-</div>
-
-</div>
-
-<div id="battle-box">
-  <div id="battle-box-content" class="grid-content">
-    <div class="grid-item"><img src="images/apple-o-archer.gif"></div>
-    <div class="grid-item"><img src="images/sword.gif"></div>
-    <div class="grid-item"></div>
-    <div class="grid-item"><span id ="damagePlayer"></span><img id="battle-box-player"></div>
-    <div class="grid-item"><span id ="damageEnemy"></span><img id="battle-box-enemy"></div>
-    <div class="grid-item" id="player-attack">0</div>
-    <div class="grid-item" id="player-health">20</div>
-    <div class="grid-item" id="enemy-attack">9</div>
-    <div class="grid-item" id="enemy-health">10</div>
-  </div>
-</div>
-<div id="class-change-modal">
-<div id = "class-change-wrapper">
-  <span onclick="document.getElementById('class-change-modal').style.display='none'" class="close">&times;</span>
-<div id="class-desc"></div>
-  <div id="class-skills">
-
-    <div class="popup" onclick="myFunction()">Click me!
-</div>
-<span class="popuptext" id="sk0pop">Popup text...</span>
-<img src="bash.gif" id="sk0" class="popup" onclick="skillPopup()">
-<span class="popuptext" id="myPopup">Popup text...</span>
-<img src="swordmastery.gif" id="sk1" class="popup" onclick="skillPopup()">
-<span class="popuptext" id="myPopup">Popup text...</span>
-<img src="swordmastery.gif" id="sk2" class="popup" onclick="skillPopup()">
-<span class="popuptext" id="myPopup">Popup text...</span>
-<img src="swordmastery.gif" id="sk3" class="popup" onclick="skillPopup()">
-<span class="popuptext" id="myPopup">Popup text...</span>
-<img src="bash.gif" id="sk4" class="popup" onclick="skillPopup()">
-
-  </div>
-  <div id="class-change-carousel">
-    <button class="button" onclick="classCarousel('left')"><</button>
-    <div id = "sprites">
-      <img id="class1">
-      <img id="class2">
-      <img id="class3">
-    </div>
-    <button class="button" onclick="classCarousel('right')">></button>
-  </div>
-  <div id="class-stats"></div>
-  <div id="select-button"><button onclick="confirmationTrigger()">Select</button>
-</div>
-</div>
-</div>
-<div id="shop-menu-modal">
-  <div id="shop-menu">
-    <button class="tablink button" onclick="openTab(event, 'shop-items');shopPopulator('items')">Items</button>
-    <button class="tablink button" onclick="openTab(event, 'shop-weapons');shopPopulator('weapons')">Weapons</button>
-    <button class="tablink button" onclick="openTab(event, 'shop-armours');shopPopulator('armours')">Armours</button>
-
-    <div id = "shop-items" class="tabs fader">
-<h2 class="zeny"></h2>
-      <div id="items1" class="shop-options">
-        <div class="overlay">
-          <button class="purchase-button" onclick="purchase(0)">Buy</button>
-          <span class="cost">Cost: 100z</span>
-        </div>
-        <img src="images/emperium.gif">
+  <button id="myBtn">Open Modal</button>
+  <button onclick="drawCard(activePlayer)">Draw Card</button>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <div id="player-sprite">
+        <img src="images/novicem.gif">
       </div>
-      <div id="items2" class="shop-options">
-        <div class="overlay">
-          <button class="purchase-button" onclick="purchase(1)">Buy</button>
-          <span class="cost">Cost: 100z</span>
-        </div>
-        <img></img>
+      <div id="player-attack">2</div>
+      <div id="player-hp">20</div>
+      <div id="enemy-sprite">
+        <img src="images/poring.gif">
       </div>
-      <div id="items3" class="shop-options">
-      <div class="overlay">
-          <button class="purchase-button" onclick="purchase(2)">Buy</button>
-          <span class="cost">Cost: 100z</span>
-      </div>
-      <img></img>
-    </div>
-      <span onclick="document.getElementById('shop-menu-modal').style.display='none'" class="close">&times;</span>
-    </div>
-
-    <div id = "shop-weapons" class="tabs fader">
-      <h2 class="zeny"></h2>
-      <div id="weapons1" class="shop-options">
-        <div class="overlay">
-          <button class="purchase-button" onclick="purchase()">Buy</button>
-          <span class="cost">Cost: 100z</span>
-          <img></img>
-        </div>
-      </div>
-      <div id="weapons2" class="shop-options">
-        <div class="overlay">
-          <button class="purchase-button" onclick="purchase()">Buy</button>
-          <span class="cost">Cost: 100z</span>
-          <img></img>
-        </div>
-      </div>
-      <div id="weapons3" class="shop-options">
-        <div class="overlay">
-          <button class="purchase-button" onclick="purchase()">Buy</button>
-          <span class="cost">Cost: 100z</span>
-          <img></img>
-        </div>
-      </div>
-      <span onclick="document.getElementById('shop-menu-modal').style.display='none'" class="close">&times;</span>
-    </div>
-    <div id = "shop-armours" class="tabs fader">
-      <h2 class="zeny"></h2>
-      <div id="armours1" class="shop-options">
-        <div class="overlay">
-          <button class="purchase-button" onclick="purchase()">Buy</button>
-          <span class="cost">Cost: 100z</span>
-          <img></img>
-        </div>
-      </div>
-      <div id="armours2" class="shop-options">
-        <div class="overlay">
-          <button class="purchase-button" onclick="purchase()">Buy</button>
-          <span class="cost">Cost: 100z</span>
-          <img></img>
-        </div>
-      </div>
-      <div id="armours3" class="shop-options">
-        <div class="overlay">
-          <button class="purchase-button" onclick="purchase()">Buy</button>
-          <span class="cost">Cost: 100z</span>
-          <img></img>
-        </div>
-      </div>
-      <span onclick="document.getElementById('shop-menu-modal').style.display='none'" class="close">&times;</span>
+      <div id="enemy-attack">1</div>
+      <div id="enemy-hp">20</div>
     </div>
   </div>
+
+
+<div id="grid-wrapper">
+  <div id="enemy-header">Enemy Header</div>
+  <div id="enemy-deck">enemy Deck</div>
+  <div id="playing-field-left">pfl</div>
+  <div id="playing-field-right">pfr</div>
+    <div id="esc1" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)">  </div>
+    <div id="esc2" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    <div id="esc3" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    <div id="esc4" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    <div id="esc5" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    <div id="esc6" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+  <div id="divider"></div>
+  <div id="psc1" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="psc2" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="psc3" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="psc4" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="psc5" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="psc6" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+  <div id="player-header">player Header</div>
+  <div id="player-deck">player Deck</div>
+  <div id="player-hand" ondrop="drop(event)" ondragover="allowDrop(event)">
+  </div>
+  </div>
+
 </div>
-
-
-<div id="cheat-menu">
-<button onclick="cardDraw()">Draw Card</button>
-<button onclick="cardChecker()">Fight Mob</button>
-<button onclick="shopTrigger();shopPopulator('items')">Open Shop</button>
-<button onclick="classChangeModalLoader();">Class changer</button>
-
-</div>
-<div id="page-container">
-
-<div id = "enemy-cells">
-  <div id = "5" class="summon-cell"></div><div id = "6" class="summon-cell"></div><div id = "7" class="summon-cell"></div><div id = "8" class="summon-cell"></div>
-</div>
-<div id ="enemy-sprite-container">
-<img id= "enemy-sprite" src="novicem.gif">
-
-</div>
-
-<div id = "player-cells">
-<div id = "1" class="summon-cell"></div><div id = "2" class="summon-cell"></div><div id = "3" class="summon-cell"></div><div id = "4" class="summon-cell"></div>
-</div>
-<div id ="player-sprite-container">
-
-<img id = "player-sprite" src="novicem.gif">
-</div>
-
-<div id ="hand-container">
-<div id = "hand">
-</div>
-</div>
-
 </div>
 </body>
-  <script src="js/core.js"></script>
+  <script src="main.js"></script>
 </html>

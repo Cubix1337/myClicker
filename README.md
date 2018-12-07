@@ -1,2 +1,0 @@
-# myClicker
-Clicker game
