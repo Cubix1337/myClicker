@@ -78,9 +78,9 @@ var bonuses= [
 //consumables
 var redPotion = {
 name:"Red Potion",
-source: "redPot.jpg",
+source: "redpot.jpg",
 type: "consumable",
-bonuses:[bonuses[0]],
+bonuses:[bonuses[0],bonuses[2]],
 instance:0
 }
 
@@ -98,7 +98,7 @@ var player = {
 var activePlayer = player
 var inPlayPlayer=[];
 
-function objClone(original){  
+function objClone(original){
 let newID = original.name.toLowerCase() + original.instance
 activePlayer.hand.push(new Card(newID, original.name, original.source, original.summoned, original.attack, original.hp,original.defence,original.bounty,original.bonuses,original.instance, original.type))
 }
@@ -220,10 +220,10 @@ if (card.hp !=0 && card.hp >0 && activePlayer.hp > 0) {activePlayer.hp = activeP
 function skillUse(card){
 }
 function consume(card){
-  //iterate through bonuses afterwards
-'hp' in card.bonuses[0]?activePlayer.hp+=card.bonuses[0].hp:console.log("failed to find hp key in obj");
-'attack' in card.bonuses[0]?activePlayer.hp+=card.bonuses[0].hp:console.log("failed to find attack key in obj")
-
+  for (var i = 0; i < card.bonuses.length; i++) {
+  'hp' in card.bonuses[i]?activePlayer.hp+=card.bonuses[i].hp:console.log("failed to find hp key in obj");
+  'attack' in card.bonuses[i]?activePlayer.hp+=card.bonuses[i].hp:console.log("failed to find attack key in obj")
+  }
 cardEvalIndex++;
 pveCaller(activePlayer)
 }
