@@ -6,13 +6,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="style.css" rel="stylesheet" type="text/css">
+  <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
 </head>
 <body>
 <div id="container">
 
   <button id="myBtn">Open Modal</button>
   <button onclick="drawCard(activePlayer)">Draw Card</button>
-  <button onclick="pvecaller(activePlayer)">PVE</button>
+  <button onclick="pveCaller(activePlayer)">PVE</button>
   <div id="myModal" class="modal">
     <div class="modal-content">
       <div id="player-sprite">
@@ -39,7 +40,7 @@
     <div id="esc3" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
     <div id="esc4" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
     <div id="esc5" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-    <div id="esc6" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    <!-- <div id="esc6" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div> -->
 
   <div id="divider"></div>
   <div id="psc1" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -47,9 +48,7 @@
   <div id="psc3" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
   <div id="psc4" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
   <div id="psc5" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-  <div id="psc6" class="summon-cell" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-
-  <div id="player-header">player Header</div>
+  <div id="player-header"><img src="images/novicem.jpg"></div>
   <div id="player-deck">player Deck</div>
   <div id="player-hand" ondrop="drop(event)" ondragover="allowDrop(event)">
   </div>
