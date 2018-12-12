@@ -275,7 +275,7 @@ function timerCall(card){
 timerInit(card)
 }
 
-function timerInit(card){
+function timerInit(card){    
   modal.style.display="block"
   let psprite = document.getElementById("player-sprite").children[0];
   let esprite = document.getElementById("enemy-sprite").children[0];
@@ -285,11 +285,10 @@ newTimer = window.setInterval(function (){
   console.log("sprites had class removed")
 switch (card.hp > 0) {
   case card.hp !=0 && card.hp >0 && activePlayer.hp > 0:
-    card.hp-activePlayer.attack <=0 ? card.hp = 0:card.hp-=activePlayer.attack;updateHP(card);psprite.classList.add('attackanim')
+    card.hp-activePlayer.attack <=0? card.hp = 0:card.hp-=activePlayer.attack;updateHP(card);psprite.classList.add('attackanim')
     if (card.hp >0){
-      activePlayer.hp = activePlayer.hp - card.attack;
-      updateHP(card);esprite.classList.add('attackanim')
-      activePlayer.hp -=card.attack;
+        activePlayer.hp -=card.attack;
+      updateHP(card);esprite.classList.add('attackanim')      
       console.log(activePlayer.hp);
     } else{
       card.hp=0;console.log("card dead");esprite.style.opacity=0;
@@ -297,7 +296,7 @@ switch (card.hp > 0) {
     }
     break;
   default:{}
-}},3000)
+}},2000)
 }
 
 
