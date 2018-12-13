@@ -25,7 +25,8 @@ var swordsman ={
   bonuses:[1,2],
   skills:[1,2],
   availableClasses:[novice,swordsman],
-  image: "images/swordm.gif"
+  image: "images/swordm.gif",
+  sprite: "images/swordm.gif"
 }
 
 var novice ={
@@ -33,7 +34,8 @@ var novice ={
   bonuses:[1,2],
   skills:[skills[0]],
   availableClasses:[swordsman],
-  image: "images/novicem.jpg"
+  image: "images/novicem.jpg",
+  sprite: "images/novicem.gif"
 }
 
 function Card (id,name,image,summoned,attack,hp,defence,bounty,bonuses,instance,type){
@@ -62,7 +64,8 @@ name:"Red Potion",
 image: "redpot.jpg",
 type: "consumable",
 bonuses:[bonuses[0],bonuses[2]],
-instance:0
+instance:0,
+summoned: "items/redpot.jpg"
 }
 
 //player objects
@@ -129,17 +132,6 @@ function cardRender(card){
   card.instance++;
 }
 
-function pve(activePlayer,card){
-//make modal canvas later
-updateHP(card);
-modal.style.display="block";
-  setTimeout(function(){
-  let esprite = document.getElementById("enemy-sprite");
-  esprite.children[0].src="images/"+card.summoned;
-  let psprite = document.getElementById("player-sprite").children[0];
-psprite.classList.remove('attackanim');esprite.children[0].classList.remove('attackanim');esprite.children[0].classList.remove('deathanim')
-},800)}
-
 var cardOrder = [];
 var cardEvalIndex = 0;
 function inPlaySorter(){
@@ -169,7 +161,7 @@ cardOrder = []
 inPlaySorter();
 switch(evaluator(activePlayer)) {
   case "mob":
-      cardEvalIndex<5? timerRunner(activePlayer,cardOrder[cardEvalIndex]):console.log(">5")
+      cardEvalIndex<5? timerInit(cardOrder[cardEvalIndex]):console.log(">5")
       break;
   case "mvp":
       console.log("mvp")
@@ -185,19 +177,6 @@ switch(evaluator(activePlayer)) {
       {}
 }}
 
-function timerRunner(activePlayer,card){
-pve(activePlayer,card);
-let psprite = document.getElementById("player-sprite").children[0];
-let esprite = document.getElementById("enemy-sprite").children[0];
-psprite.classList.remove('attackanim');
-esprite.classList.remove('attackanim');
-timerInt = window.setInterval(function (){
-if (card.hp !=0 && card.hp >0 && activePlayer.hp > 0) {card.hp = card.hp - activePlayer.attack;psprite.classList.add('attackanim');pve(activePlayer,card)}
-if (card.hp !=0 && card.hp >0 && activePlayer.hp > 0) {activePlayer.hp = activePlayer.hp - card.attack;esprite.classList.add('attackanim');pve(activePlayer,card)}
-if (activePlayer.hp <= 0){console.log("gameOver");clearInterval(timerInt)};
-if (card.hp<=0){card.hp = 0;updateHP(card);esprite.classList.add('deathanim');cardEvalIndex++;clearInterval(timerInt);pveCaller(activePlayer)}
-},2000)}
-
 function skillUse(skill){
   for (var i = 0; i < card.bonuses.length; i++) {
   'hp' in card.bonuses[i]?activePlayer.hp+=card.bonuses[i].hp:console.log("failed to find hp key in obj");
@@ -206,12 +185,26 @@ function skillUse(skill){
 cardEvalIndex++;
 }
 function consume(card){
-  for (var i = 0; i < card.bonuses.length; i++) {
+  let esprite = document.getElementById("enemy-sprite").children[0];
+  let eatck = document.getElementById("enemy-attack")
+  eatck.style.visibility="hidden";
+  let patck = document.getElementById("player-attack")
+  let ehp = document.getElementById("enemy-hp")
+  ehp.style.visibility="hidden";
+  let php = document.getElementById("player-hp")
+  esprite.src="images/"+card.summoned;esprite.style.opacity=1;esprite.classList.remove('deathanim');esprite.classList.add("attackanim")
+  modal.style.display="block";
+    for (var i = 0; i < card.bonuses.length; i++) {
   'hp' in card.bonuses[i]?activePlayer.hp+=card.bonuses[i].hp:console.log("failed to find hp key in obj");
   'attack' in card.bonuses[i]?activePlayer.attack+=card.bonuses[i].attack:console.log("failed to find attack key in obj")
+  //try switch logic?
   }
 cardEvalIndex++;
-pveCaller(activePlayer)
+console.log("card comsumed")
+setTimeout(function(){patck.innerHTML = activePlayer.attack;php.innerHTML = activePlayer.hp},1500);
+setTimeout(function(){pveCaller(activePlayer);eatck.style.visibility="visible";
+ehp.style.visibility="visible";
+},2000);
 }
 
 function updateHP(card){
@@ -269,36 +262,37 @@ playerHeaderPopulator()
 //    function update ()
 //    {}
 
-
-function timerCall(card){
-  pve(activePlayer,card);
-timerInit(card)
-}
-
-function timerInit(card){    
-  modal.style.display="block"
-  let psprite = document.getElementById("player-sprite").children[0];
+function timerInit(card){
   let esprite = document.getElementById("enemy-sprite").children[0];
-newTimer = window.setInterval(function (){
+  let psprite = document.getElementById("player-sprite").children[0];
+  esprite.src="images/"+card.summoned;esprite.style.opacity=1;esprite.classList.remove('deathanim')
+  psprite.src= activePlayer.class.sprite;
+  updateHP(card);
+  modal.style.display="block";
+//combat engine
+  newTimer = window.setInterval(function (){
   setTimeout(function () {psprite.classList.remove('attackanim')},500)
   setTimeout(function () {esprite.classList.remove('attackanim')},500)
   console.log("sprites had class removed")
 switch (card.hp > 0) {
   case card.hp !=0 && card.hp >0 && activePlayer.hp > 0:
-    card.hp-activePlayer.attack <=0? card.hp = 0:card.hp-=activePlayer.attack;updateHP(card);psprite.classList.add('attackanim')
+    card.hp-activePlayer.attack <=0 ? card.hp = 0:card.hp-=activePlayer.attack;updateHP(card);psprite.classList.add('attackanim')
     if (card.hp >0){
-        activePlayer.hp -=card.attack;
-      updateHP(card);esprite.classList.add('attackanim')      
-      console.log(activePlayer.hp);
+      activePlayer.hp = activePlayer.hp -= card.attack;
+      updateHP(card);esprite.classList.add('attackanim')
+      activePlayer.hp<=0 ?   setTimeout(function () {alert("omae wa mou shindeiru")},1000) && clearInterval(newTimer):console.log(activePlayer.hp);
     } else{
       card.hp=0;console.log("card dead");esprite.style.opacity=0;
-      setTimeout(function () {clearInterval(newTimer);console.log("timer is stopped")}, 1000);
+      setTimeout(function () {clearInterval(newTimer);cardEvalIndex++;pveCaller(activePlayer)}, 1000);
     }
+    case activePlayer.hp <=0:
+
     break;
   default:{}
-}},2000)
+}},1500)
 }
 
+// pveCaller(activePlayer)
 
 function checker(v){
 let x = Math.floor(Math.random() *100);
