@@ -55,13 +55,13 @@ grid-template-rows: auto auto auto auto auto auto;
       grid-row: 1/5;
   }
 
-#skillBar {
+#skill-bar {
       grid-row: 1;
       grid-column: 3;
       height: -webkit-fill-available;
 }
 
-#skillBar img{
+#skill-bar img{
   width: auto;
   border: 1px solid blue;
   padding: 5px;

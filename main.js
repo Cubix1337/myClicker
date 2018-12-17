@@ -16,29 +16,43 @@ var bonuses= [
 /*3*/  {attack: 2}
 ]
 //skills
-var skills= [
-/*0*/{name:"Bash",image: "bash.gif",bonuses:[bonuses[0],bonuses[2]], cooldown:2},
+var skills = [
+bash = {name:"Bash",image: "bash.gif", effectType:"attackAug", skillClass:"Active", v:1, cooldown:2, desc:"Your next attack deals 2x damage"},
+doubleAttack = {name:"Double Attack",image: "doubleattack.gif", effectType:"attackAug", skillClass:"Passive", v:1, desc:"Passively has a 50% chance to deal 2x damage on any physical attack", chance:50}
 ]
+
 //classes
 var swordsman ={
   name:"Swordsman",
-  bonuses:[1,2],
-  skills:[1,2],
+  skills:[bash],
   availableClasses:[novice,swordsman],
   image: "images/swordm.gif",
-  sprite: "images/swordm.gif"
+  sprite: "images/swordm.gif",
+  properties:[]
 }
 
 var novice ={
   name:"Novice",
-  bonuses:[1,2],
-  skills:[skills[0]],
+  skills:[bash],
   availableClasses:[swordsman],
   image: "images/novicem.jpg",
-  sprite: "images/novicem.gif"
+  sprite: "images/novicem.gif",
+  properties:[],
+  desc:"Starter class"
 }
 
-function Card (id,name,image,summoned,attack,hp,defence,bounty,bonuses,instance,type){
+var theif ={
+  name:"Theif",
+  skills:[doubleAttack],
+  availableClasses:[novice],
+  image: "images/thiefm.jpg",
+  sprite: "images/theifm.gif",
+  properties:[],
+  desc:"Steals things"
+}
+
+
+function Card (id,name,image,summoned,attack,hp,defence,bounty,bonuses,instance,type,v, effectType){
   this.id = id
   this.name = name
   this.image = image
@@ -50,6 +64,8 @@ function Card (id,name,image,summoned,attack,hp,defence,bounty,bonuses,instance,
   this.bonuses = bonuses
   this.instance = instance
   this.type = type
+  this.v = v
+  this.effectType = effectType
 }
 
 //cards
@@ -63,7 +79,8 @@ var redPotion = {
 name:"Red Potion",
 image: "redpot.jpg",
 type: "consumable",
-bonuses:[bonuses[0],bonuses[2]],
+effectType:"hpGain",
+v:5,
 instance:0,
 summoned: "items/redpot.jpg"
 }
@@ -74,7 +91,8 @@ var player = {
   hp:20,
   maxHP:20,
   attack:1,
-  class: novice,
+  attackAug:0,
+  class: theif,
   hand:[],
   deck: [poring,picky,redPotion],
 }
@@ -84,7 +102,7 @@ var inPlayPlayer=[];
 
 function objClone(original){
 let newID = original.name.toLowerCase() + original.instance
-activePlayer.hand.push(new Card(newID, original.name, original.image, original.summoned, original.attack, original.hp,original.defence,original.bounty,original.bonuses,original.instance, original.type))
+activePlayer.hand.push(new Card(newID, original.name, original.image, original.summoned, original.attack, original.hp,original.defence,original.bounty,original.bonuses,original.instance, original.type, original.v, original.effectType))
 }
 
 var enemy = {
@@ -177,13 +195,24 @@ switch(evaluator(activePlayer)) {
       {}
 }}
 
-function skillUse(skill){
-  for (var i = 0; i < card.bonuses.length; i++) {
-  'hp' in card.bonuses[i]?activePlayer.hp+=card.bonuses[i].hp:console.log("failed to find hp key in obj");
-  'attack' in card.bonuses[i]?activePlayer.attack *= card.bonuses[i].attack:console.log("failed to find attack key in obj")
+function effectApply(effect){
+  switch (effect.effectType){
+  case "hpGain":
+  activePlayer.hp += effect.v;
+  console.log("You have gained "+effect.v+" hp. Your current hp is: "+activePlayer.hp+".");
+  break;
+  case "attackAug":
+  activePlayer.attackAug = effect.v*activePlayer.attack;
+  console.log("You have gained "+activePlayer.attackAug+" attack. Your current attack is: "+(activePlayer.attackAug+activePlayer.attack)+".");
+  // cardEvalIndex++;
   }
-cardEvalIndex++;
 }
+
+function skillUse(effect){
+effectApply(effect);
+effect.cooldown = 2;
+}
+
 function consume(card){
   let esprite = document.getElementById("enemy-sprite").children[0];
   let eatck = document.getElementById("enemy-attack")
@@ -194,11 +223,7 @@ function consume(card){
   let php = document.getElementById("player-hp")
   esprite.src="images/"+card.summoned;esprite.style.opacity=1;esprite.classList.remove('deathanim');esprite.classList.add("attackanim")
   modal.style.display="block";
-    for (var i = 0; i < card.bonuses.length; i++) {
-  'hp' in card.bonuses[i]?activePlayer.hp+=card.bonuses[i].hp:console.log("failed to find hp key in obj");
-  'attack' in card.bonuses[i]?activePlayer.attack+=card.bonuses[i].attack:console.log("failed to find attack key in obj")
-  //try switch logic?
-  }
+  effectApply(card);
 cardEvalIndex++;
 console.log("card comsumed")
 setTimeout(function(){patck.innerHTML = activePlayer.attack;php.innerHTML = activePlayer.hp},1500);
@@ -208,7 +233,7 @@ ehp.style.visibility="visible";
 }
 
 function updateHP(card){
-let patck = document.getElementById("player-attack");let php = document.getElementById("player-hp");patck.innerHTML = activePlayer.attack;php.innerHTML = activePlayer.hp;let eatck = document.getElementById("enemy-attack");let ehp = document.getElementById("enemy-hp");eatck.innerHTML = card.attack;ehp.innerHTML = card.hp;
+let patck = document.getElementById("player-attack");let php = document.getElementById("player-hp");patck.innerHTML = activePlayer.attack+activePlayer.attackAug;php.innerHTML = activePlayer.hp;let eatck = document.getElementById("enemy-attack");let ehp = document.getElementById("enemy-hp");eatck.innerHTML = card.attack;ehp.innerHTML = card.hp;
 }
 
 function equip(card){
@@ -217,9 +242,13 @@ function equip(card){
 
 function playerHeaderPopulator(){
 let phead = document.getElementById("player-header");
-phead.innerHTML="<img src='"+player.class.image+"'><p>Name: "+player.name+"</p><p>HP: "+player.hp+"</p><p>Class: "+player.class.name+"</p><p>Zeny: "
-phead.innerHTML+="<div id='skillBar'><img src='images/"+activePlayer.class.skills[0].image+"'><img src='images/"+activePlayer.class.skills[0].image+"'><div>"
+phead.innerHTML="<img id ='player-header-image' src='"+player.class.image+"'><p>Name: "+player.name+"</p><p>HP: "+player.hp+"</p><p>Class: "+player.class.name+"</p><p>Zeny: </p><div id='skill-bar'></div>";
+let pskills = document.getElementById("skill-bar");
+for (var i = 0; i < activePlayer.class.skills.length; i++) {
+pskills.innerHTML+= "<img onclick='skillUse("+activePlayer.class.skills[i].name.toLowerCase()+")' src='images/"+activePlayer.class.skills[i].image+"'>"
 }
+}
+
 playerHeaderPopulator()
 //phaser
 // var config = {
@@ -234,7 +263,6 @@ playerHeaderPopulator()
 //        },
 //        parent:'divider'
 //    };
-//
 //    var game = new Phaser.Game(config);var anim;var sprite;var progress;var frameView;
 //
 //    function preload ()
@@ -273,10 +301,9 @@ function timerInit(card){
   newTimer = window.setInterval(function (){
   setTimeout(function () {psprite.classList.remove('attackanim')},500)
   setTimeout(function () {esprite.classList.remove('attackanim')},500)
-  console.log("sprites had class removed")
 switch (card.hp > 0) {
   case card.hp !=0 && card.hp >0 && activePlayer.hp > 0:
-    card.hp-activePlayer.attack <=0 ? card.hp = 0:card.hp-=activePlayer.attack;updateHP(card);psprite.classList.add('attackanim')
+    card.hp-activePlayer.attack <=0 ? card.hp = 0:card.hp-= damageCalc();updateHP(card);activePlayer.attackAug = 0;psprite.classList.add('attackanim')
     if (card.hp >0){
       activePlayer.hp = activePlayer.hp -= card.attack;
       updateHP(card);esprite.classList.add('attackanim')
@@ -292,9 +319,26 @@ switch (card.hp > 0) {
 }},1500)
 }
 
-// pveCaller(activePlayer)
+function passiveCheck(){
+var result =""
+for (var i = 0; i < activePlayer.class.skills.length; i++) {
+activePlayer.class.skills[i].skillClass=="Passive" && activePlayer.class.skills[i].effectType=="attackAug" ? result = activePlayer.class.skills[i]:console.log(false)
+}
+return result;
+}
 
-function checker(v){
+function damageCalc(){
+activePlayer.attackAug = 0;
+let result = passiveCheck();
+if (checker(result.chance)==true){
+effectApply(result)}
+let dmg = activePlayer.attack+activePlayer.attackAug
+return (dmg);
+}
+
+function checker(chance){
+let proc = false;
 let x = Math.floor(Math.random() *100);
-x>v? console.log(x+" procced"):console.log("didnt")
+x>chance? proc =true: proc = false;
+return proc;
 }
