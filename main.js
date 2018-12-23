@@ -73,6 +73,9 @@ function Card (id,name,image,summoned,attack,hp,defence,bounty,bonuses,instance,
 var poring = {name:"Poring",image:"poring.jpg",summoned:"poring.gif",attack: 1,hp: 3,defence:0,bounty: 100,bonuses:[1,2],instance:0,type:"mob"}
 var picky = {name:"Picky",image:"picky.jpg",summoned:"picky.gif",attack: 2,hp: 5,defence:0,bounty: 100,instance:0,type:"mob"}
 
+//MVPs
+var baphomet = {name:"Baphomet",image:"baphomet.jpg",summoned:"baphomet.gif",attack: 5,hp: 10,defence:0,bounty: 500,instance:0,type:"mob"}
+
 //equips
 //consumables
 var redPotion = {
@@ -90,11 +93,11 @@ var player = {
   name:"Tony",
   hp:20,
   maxHP:20,
-  attack:1,
+  attack:2,
   attackAug:0,
   class: theif,
   hand:[],
-  deck: [poring,picky,redPotion],
+  deck: [poring,picky,redPotion,baphomet],
 }
 
 var activePlayer = player
@@ -214,14 +217,13 @@ effect.cooldown = 2;
 }
 
 function consume(card){
-  let esprite = document.getElementById("enemy-sprite").children[0];
   let eatck = document.getElementById("enemy-attack")
   eatck.style.visibility="hidden";
   let patck = document.getElementById("player-attack")
   let ehp = document.getElementById("enemy-hp")
   ehp.style.visibility="hidden";
   let php = document.getElementById("player-hp")
-  esprite.src="images/"+card.summoned;esprite.style.opacity=1;esprite.classList.remove('deathanim');esprite.classList.add("attackanim")
+  esprite.src="images/"+card.summoned;esprite.style.opacity=1;esprite.classList.remove('deathanim');esprite.classList.add("attackanim");esprite.style.animationIterationCount="1";esprite.style.animationDuration="0.5s"
   modal.style.display="block";
   effectApply(card);
 cardEvalIndex++;
@@ -250,7 +252,7 @@ pskills.innerHTML+= "<img onclick='skillUse("+activePlayer.class.skills[i].name.
 }
 
 playerHeaderPopulator()
-//phaser
+// phaser
 // var config = {
 //        type: Phaser.AUTO,
 //        width: 850,
@@ -290,9 +292,12 @@ playerHeaderPopulator()
 //    function update ()
 //    {}
 
+var esprite = document.getElementById("enemy-sprite").children[1];
+var psprite = document.getElementById("player-sprite").children[0];
+var edmg =  document.getElementById("edmg");
+
+
 function timerInit(card){
-  let esprite = document.getElementById("enemy-sprite").children[0];
-  let psprite = document.getElementById("player-sprite").children[0];
   esprite.src="images/"+card.summoned;esprite.style.opacity=1;esprite.classList.remove('deathanim')
   psprite.src= activePlayer.class.sprite;
   updateHP(card);
@@ -303,7 +308,7 @@ function timerInit(card){
   setTimeout(function () {esprite.classList.remove('attackanim')},500)
 switch (card.hp > 0) {
   case card.hp !=0 && card.hp >0 && activePlayer.hp > 0:
-    card.hp-activePlayer.attack <=0 ? card.hp = 0:card.hp-= damageCalc();updateHP(card);activePlayer.attackAug = 0;psprite.classList.add('attackanim')
+    card.hp-damageCalc() <=0 ? card.hp = 0:card.hp-= damageCalc();updateHP(card);activePlayer.attackAug = 0;psprite.classList.add('attackanim')
     if (card.hp >0){
       activePlayer.hp = activePlayer.hp -= card.attack;
       updateHP(card);esprite.classList.add('attackanim')
@@ -331,8 +336,10 @@ function damageCalc(){
 activePlayer.attackAug = 0;
 let result = passiveCheck();
 if (checker(result.chance)==true){
-effectApply(result)}
-let dmg = activePlayer.attack+activePlayer.attackAug
+effectApply(result);
+esprite.style.animationIterationCount="2";esprite.style.animationDuration="0.25s";
+} else{esprite.style.animationIterationCount="1";esprite.style.animationDuration="0.5s"};
+let dmg = activePlayer.attack+activePlayer.attackAug;
 return (dmg);
 }
 

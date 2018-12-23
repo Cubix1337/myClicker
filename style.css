@@ -146,12 +146,32 @@ overflow-x: scroll;
     justify-self: center;
     transform: scaleX(-1);
     margin-right: 10px;
+    align-self: end;
 }
 
 #enemy-sprite {
     grid-column: 3/5;
     justify-self: center;
         margin-top: auto;
+}
+
+#edmg{
+  position: relative;
+  left: 50%;
+  opacity: 0;
+  display: inherit;
+  bottom: -25px;
+  font-size: 20px;
+}
+
+.damage-dealt{
+	animation-name: damage-dealt;
+	animation-duration: 1.5s;
+  animation-iteration-count: 1;
+}
+@keyframes damage-dealt {
+	from{opacity: 1;bottom:-25px;}
+		to {opacity: 0.1;bottom:10px;}
 }
 
 #enemy-sprite img{
@@ -188,6 +208,7 @@ overflow-x: scroll;
 .attackanim{
 	animation-name: attackanim;
 	animation-duration: 0.8s;
+  animation-iteration-count: 1;
 }
 @keyframes attackanim {
     from {transform: scale(1);opacity: 0.5}
